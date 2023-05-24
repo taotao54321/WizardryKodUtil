@@ -54,6 +54,7 @@ fn make_boons_distinct(boons: Boons) -> Boons {
 
     assert!(res.into_iter().all(|x| x < 7));
     assert_ne!(res[0], res[1]);
+    assert_ne!(res[0], res[2]);
     assert_ne!(res[1], res[2]);
 
     res
