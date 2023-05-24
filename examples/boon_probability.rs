@@ -6,7 +6,7 @@ fn main() {
 }
 
 fn solve(name: &str, f: fn(Rng) -> Boons) {
-    let mut counts = vec![0; 0x10000];
+    let mut counts = [0; 7];
 
     for state in 0..=u16::MAX {
         let rng = Rng::from_state(state);
@@ -19,8 +19,7 @@ fn solve(name: &str, f: fn(Rng) -> Boons) {
     println!("[{name}]");
     println!();
 
-    for boon in 0..7 {
-        let count = counts[boon];
+    for (boon, &count) in counts.iter().enumerate() {
         let ratio = f64::from(count) / f64::from(0x10000);
         println!("{boon}\t{count}/65536\t{ratio:.04}");
     }
