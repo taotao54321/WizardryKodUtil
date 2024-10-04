@@ -1,12 +1,12 @@
 /// 原作の乱数生成器。
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub struct Rng {
+pub struct GameRng {
     state: u16,
 }
 
-impl Rng {
+impl GameRng {
     /// 指定した内部状態を持つ乱数生成器を作る。
-    pub fn from_state(state: u16) -> Self {
+    pub fn new(state: u16) -> Self {
         Self { state }
     }
 
@@ -22,7 +22,7 @@ impl Rng {
         u8::try_from(self.state >> 8).unwrap()
     }
 
-    /// `0..end` の乱数を生成する。内部状態は 1 回更新される。
+    /// `0..end` の乱数を生成する (`end` が 0 の場合、0 を返す)。内部状態は常に 1 回更新される。
     pub fn gen_range(&mut self, end: u8) -> u8 {
         let r = self.gen();
 
@@ -37,7 +37,7 @@ mod tests {
 
     #[test]
     fn test_gen() {
-        let mut rng = Rng::from_state(0xA5A4);
+        let mut rng = GameRng::new(0xA5A4);
 
         assert_eq!(rng.gen(), 0x49);
         assert_eq!(rng.state(), 0x49A5);
@@ -51,7 +51,7 @@ mod tests {
 
     #[test]
     fn test_gen_range() {
-        let mut rng = Rng::from_state(0xA7DB);
+        let mut rng = GameRng::new(0xA7DB);
 
         assert_eq!(rng.gen_range(7), 3);
         assert_eq!(rng.state(), 0x82DC);

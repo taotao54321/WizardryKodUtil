@@ -5,11 +5,11 @@ fn main() {
     solve("Mahaman", mahaman);
 }
 
-fn solve(name: &str, f: fn(Rng) -> Boons) {
+fn solve(name: &str, f: fn(GameRng) -> Boons) {
     let mut counts = [0; 7];
 
     for state in 0..=u16::MAX {
-        let rng = Rng::from_state(state);
+        let rng = GameRng::new(state);
         let boons = f(rng);
         for boon in boons {
             counts[usize::from(boon)] += 1;
@@ -29,13 +29,13 @@ fn solve(name: &str, f: fn(Rng) -> Boons) {
 
 type Boons = [u8; 3];
 
-fn haman(mut rng: Rng) -> Boons {
+fn haman(mut rng: GameRng) -> Boons {
     let boons: Boons = std::array::from_fn(|_| rng.gen() & 3);
 
     make_boons_distinct(boons)
 }
 
-fn mahaman(mut rng: Rng) -> Boons {
+fn mahaman(mut rng: GameRng) -> Boons {
     let boons: Boons = std::array::from_fn(|_| rng.gen_range(7));
 
     make_boons_distinct(boons)

@@ -8,7 +8,7 @@ fn solve() {
     let mut counts = [0; 7];
 
     for state in 0..=u16::MAX {
-        let rng = Rng::from_state(state);
+        let rng = GameRng::new(state);
         let extra = extra_bonus_count(rng);
         counts[extra] += 1;
     }
@@ -19,7 +19,7 @@ fn solve() {
     }
 }
 
-fn extra_bonus_count(mut rng: Rng) -> usize {
+fn extra_bonus_count(mut rng: GameRng) -> usize {
     let mut count = 0;
 
     while rng.gen_range(20) == 15 {
