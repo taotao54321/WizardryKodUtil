@@ -96,8 +96,46 @@ bitflags! {
     }
 }
 
+// モンスターの 1 グループあたりの出現数ダイス式。
 define_dice_expr!(MonsterSpawnDiceExpr);
 
+impl MonsterSpawnDiceExpr {
+    pub fn bias_decoded(self) -> i16 {
+        decode_spawn_hp_bias(self.bias)
+    }
+}
+
+impl std::fmt::Display for MonsterSpawnDiceExpr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}d{}{:+}", self.count, self.face, self.bias_decoded())
+    }
+}
+
+// モンスターのHPダイス式。
 define_dice_expr!(MonsterHpDiceExpr);
 
+impl MonsterHpDiceExpr {
+    pub fn bias_decoded(self) -> i16 {
+        decode_spawn_hp_bias(self.bias)
+    }
+}
+
+impl std::fmt::Display for MonsterHpDiceExpr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}d{}{:+}", self.count, self.face, self.bias_decoded())
+    }
+}
+
+// モンスターの打撃 1 回のダメージダイス式。
 define_dice_expr!(MonsterMeleeDiceExpr);
+
+/// 出現数ダイス式およびHPダイス式の追加値を `i16` 値に変換する。
+///
+/// `0..=149` が正、`150..=255` が負 (2 の補数) とみなされる。
+fn decode_spawn_hp_bias(bias: u8) -> i16 {
+    if bias <= 149 {
+        i16::from(bias)
+    } else {
+        i16::from(bias as i8)
+    }
+}
