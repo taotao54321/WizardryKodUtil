@@ -27,6 +27,12 @@ macro_rules! define_dice_expr {
                 self.bias
             }
         }
+
+        impl From<[u8; 3]> for $name {
+            fn from(buf: [u8; 3]) -> Self {
+                Self::new(buf[0], buf[1], buf[2])
+            }
+        }
     };
 }
 pub(crate) use define_dice_expr;

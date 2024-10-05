@@ -20,10 +20,25 @@ impl<T> SliceExt for [T] {
 }
 
 pub trait U8SliceExt: private::U8SliceExtSealed {
+    fn split_first_i8(&self) -> Option<(i8, &Self)>;
+    fn split_first_u8(&self) -> Option<(u8, &Self)>;
     fn split_first_u16le(&self) -> Option<(u16, &Self)>;
 }
 
 impl U8SliceExt for [u8] {
+    fn split_first_i8(&self) -> Option<(i8, &Self)> {
+        let (&value, remain) = self.split_first()?;
+        let value = value as i8;
+
+        Some((value, remain))
+    }
+
+    fn split_first_u8(&self) -> Option<(u8, &Self)> {
+        let (&value, remain) = self.split_first()?;
+
+        Some((value, remain))
+    }
+
     fn split_first_u16le(&self) -> Option<(u16, &Self)> {
         let (&value, remain) = self.split_first_chunk::<2>()?;
         let value = u16::from_le_bytes(value);
