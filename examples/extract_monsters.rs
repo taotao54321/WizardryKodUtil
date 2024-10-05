@@ -108,6 +108,7 @@ fn output_markdown_row(id: usize, monster: Monster) {
     {
         let mut notes = Vec::<String>::new();
         notes.extend(note_spells(mage_spell_lv, cleric_spell_lv));
+        notes.extend(note_breath(breath_elements));
         // TODO
         row.notes(notes.into_iter().join("<br>"));
     }
@@ -127,6 +128,10 @@ fn note_spells(mage: u8, cleric: u8) -> Option<String> {
         "呪文: {}",
         mage.into_iter().chain(cleric).join(" ")
     ))
+}
+
+fn note_breath(elements: Elements) -> Option<String> {
+    (!elements.is_empty()).then(|| format!("息: {}", ElementsDisplayAbbrev::new(elements)))
 }
 
 #[derive(Clone, Debug, Builder)]
