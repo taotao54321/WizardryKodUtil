@@ -26,6 +26,8 @@ pub struct Monster {
     cleric_spell_lv: u8,
     element_resistance: Elements,
     abilitys: MonsterAbilitys,
+    xp: u64,
+    melee_dice_exprs: Vec<MonsterMeleeDiceExpr>,
 }
 
 bitflags! {
@@ -95,3 +97,5 @@ bitflags! {
 define_dice_expr!(MonsterSpawnDiceExpr);
 
 define_dice_expr!(MonsterHpDiceExpr);
+
+define_dice_expr!(MonsterMeleeDiceExpr);
