@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
 use clap::Parser;
+use itertools::Itertools as _;
 
 use wizardry_kod_util::*;
 
@@ -18,7 +19,59 @@ fn main() -> anyhow::Result<()> {
 
     let monsters = extract::extract_monsters(&rom);
 
-    dbg!(monsters);
+    output_markdown(&monsters);
 
     Ok(())
+}
+
+fn output_markdown(monsters: &[Monster]) {
+    println!("| ID  | 確定名 | 不確定名 |");
+    println!("| --: | -- | -- |");
+
+    for (id, monster) in monsters.iter().enumerate() {
+        output_markdown_row(id, monster);
+    }
+}
+
+fn output_markdown_row(id: usize, monster: &Monster) {
+    let Monster {
+        name_known_singular: _,
+        name_known_plural,
+        name_unknown_singular,
+        name_unknown_plural,
+        kinds,
+        spawn_dice_expr,
+        hp_dice_expr,
+        ac,
+        drain_xl,
+        healing,
+        drop_table_id_wandering,
+        drop_table_id_guardian,
+        follower_monster_id,
+        follower_probability,
+        mage_spell_lv,
+        cleric_spell_lv,
+        breath_elements,
+        spell_resistance,
+        element_resistance,
+        abilitys,
+        xp,
+        melee_dice_exprs,
+    } = monster;
+
+    let mut fields: Vec<String> = vec![];
+
+    // ID
+    fields.push(format!("{id}"));
+
+    // 確定名
+    fields.push(format!(
+        "{}<br>{name_known_plural}",
+        extract::monster_true_name(id)
+    ));
+
+    // 不確定名
+    fields.push(format!("{name_unknown_singular}<br>{name_unknown_plural}",));
+
+    println!("| {} |", fields.iter().join(" | "));
 }
