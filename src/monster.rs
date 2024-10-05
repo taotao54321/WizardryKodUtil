@@ -365,6 +365,26 @@ impl std::fmt::Display for MonsterHpDiceExpr {
 // モンスターの打撃 1 回のダメージダイス式。
 define_dice_expr!(MonsterMeleeDiceExpr);
 
+impl MonsterMeleeDiceExpr {
+    pub fn bias_decoded(self) -> i8 {
+        self.bias as i8
+    }
+}
+
+impl std::fmt::Display for MonsterMeleeDiceExpr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let count = self.count;
+        let face = self.face;
+        let bias_decoded = self.bias_decoded();
+
+        if bias_decoded == 0 {
+            write!(f, "{count}d{face}")
+        } else {
+            write!(f, "{count}d{face}{bias_decoded:+}")
+        }
+    }
+}
+
 /// 出現数ダイス式およびHPダイス式の追加値を `i16` 値に変換する。
 ///
 /// `0..=149` が正、`150..=255` が負 (2 の補数) とみなされる。

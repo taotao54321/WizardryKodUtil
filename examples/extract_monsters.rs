@@ -41,6 +41,7 @@ fn output_markdown_header() {
         (HoriAlign::Left, "種別"),
         (HoriAlign::Left, "HP"),
         (HoriAlign::Right, "AC"),
+        (HoriAlign::Left, "打撃"),
         (HoriAlign::Right, "経験値"),
         (HoriAlign::Left, "ドロップ"),
         (HoriAlign::Left, "出現数"),
@@ -92,6 +93,9 @@ fn output_markdown_row(id: usize, monster: Monster) {
     row.kinds(format!("{}", MonsterKindDisplay::new(kinds)));
     row.hp(format!("{hp_dice_expr}"));
     row.ac(format!("{ac}"));
+
+    row.melee(melee_dice_exprs.iter().join("<br>"));
+
     row.xp(format!("{xp}"));
     row.drop_(format!(
         "徘徊: {drop_table_id_wandering}<br>玄室: {drop_table_id_guardian}"
@@ -116,6 +120,7 @@ struct MarkdownRow {
     kinds: String,
     hp: String,
     ac: String,
+    melee: String,
     xp: String,
     drop_: String,
     spawn: String,
@@ -131,6 +136,7 @@ impl MarkdownRow {
             kinds,
             hp,
             ac,
+            melee,
             xp,
             drop_,
             spawn,
@@ -144,6 +150,7 @@ impl MarkdownRow {
             kinds,
             hp,
             ac,
+            melee,
             xp,
             drop_,
             spawn,
