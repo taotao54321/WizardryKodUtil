@@ -111,7 +111,9 @@ fn output_markdown_row(id: usize, monster: Monster) {
         let mut notes = Vec::<String>::new();
         notes.extend(note_spells(mage_spell_lv, cleric_spell_lv));
         notes.extend(note_breath(breath_elements));
-        // TODO
+        notes.extend(note_special(drain_xl, healing, abilitys));
+        notes.extend(note_element_resistance(element_resistance));
+        notes.extend(note_vulnerability(abilitys));
         row.notes(notes.into_iter().join("<br>"));
     }
 
@@ -119,21 +121,64 @@ fn output_markdown_row(id: usize, monster: Monster) {
 }
 
 fn note_spells(mage: u8, cleric: u8) -> Option<String> {
-    if mage == 0 && cleric == 0 {
-        return None;
+    let mut ss = Vec::<String>::new();
+
+    if mage > 0 {
+        ss.push(format!("魔{mage}"));
+    }
+    if cleric > 0 {
+        ss.push(format!("僧{cleric}"));
     }
 
-    let mage = (mage > 0).then(|| format!("魔{mage}"));
-    let cleric = (cleric > 0).then(|| format!("僧{cleric}"));
-
-    Some(format!(
-        "呪文: {}",
-        mage.into_iter().chain(cleric).join(" ")
-    ))
+    (!ss.is_empty()).then(|| format!("呪文: {}", ss.into_iter().join(" ")))
 }
 
 fn note_breath(elements: Elements) -> Option<String> {
     (!elements.is_empty()).then(|| format!("息: {}", ElementsDisplayAbbrev::new(elements)))
+}
+
+fn note_special(drain_xl: u8, healing: i8, abilitys: MonsterAbilitys) -> Option<String> {
+    let mut ss = Vec::<String>::new();
+
+    // 打撃の追加効果は原作での処理順に並べている。
+    if abilitys.contains(MonsterAbility::Poison) {
+        ss.push("毒".to_owned());
+    }
+    if abilitys.contains(MonsterAbility::Paralyze) {
+        ss.push("麻".to_owned());
+    }
+    if abilitys.contains(MonsterAbility::Petrify) {
+        ss.push("石".to_owned());
+    }
+    if drain_xl > 0 {
+        ss.push(format!("吸{drain_xl}"));
+    }
+    if abilitys.contains(MonsterAbility::Critical) {
+        ss.push("首".to_owned());
+    }
+
+    if abilitys.contains(MonsterAbility::Call) {
+        ss.push("呼".to_owned());
+    }
+    if abilitys.contains(MonsterAbility::Flee) {
+        ss.push("逃".to_owned());
+    }
+
+    if healing != 0 {
+        ss.push(format!("回{healing}"));
+    }
+
+    (!ss.is_empty()).then(|| format!("特殊: {}", ss.into_iter().join(" ")))
+}
+
+fn note_element_resistance(elements: Elements) -> Option<String> {
+    (!elements.is_empty()).then(|| format!("抵抗: {}", ElementsDisplayAbbrev::new(elements)))
+}
+
+fn note_vulnerability(abilitys: MonsterAbilitys) -> Option<String> {
+    abilitys
+        .contains(MonsterAbility::Sleepy)
+        .then(|| "弱点: 眠".to_owned())
 }
 
 #[derive(Clone, Debug, Builder)]
@@ -198,6 +243,7 @@ impl MarkdownRow {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 enum HoriAlign {
     Left,
+    #[allow(dead_code)]
     Center,
     Right,
 }
