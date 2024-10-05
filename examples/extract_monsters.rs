@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
 use clap::Parser;
+use derive_builder::Builder;
 use itertools::Itertools as _;
 
 use wizardry_kod_util::*;
@@ -19,21 +20,35 @@ fn main() -> anyhow::Result<()> {
 
     let monsters = extract::extract_monsters(&rom);
 
-    output_markdown(&monsters);
+    output_markdown(monsters);
 
     Ok(())
 }
 
-fn output_markdown(monsters: &[Monster]) {
-    println!("| ID  | 確定名 | 不確定名 |");
-    println!("| --: | -- | -- |");
+fn output_markdown(monsters: Vec<Monster>) {
+    output_markdown_header();
 
-    for (id, monster) in monsters.iter().enumerate() {
+    for (id, monster) in monsters.into_iter().enumerate() {
         output_markdown_row(id, monster);
     }
 }
 
-fn output_markdown_row(id: usize, monster: &Monster) {
+fn output_markdown_header() {
+    const COLUMNS: &[(HoriAlign, &str)] = &[
+        (HoriAlign::Right, "ID"),
+        (HoriAlign::Left, "確定名"),
+        (HoriAlign::Left, "不確定名"),
+        (HoriAlign::Left, "種別"),
+    ];
+
+    println!("| {} |", COLUMNS.iter().map(|col| col.1).join(" | "));
+    println!(
+        "| {} |",
+        COLUMNS.iter().map(|col| col.0.as_markdown()).join(" | ")
+    );
+}
+
+fn output_markdown_row(id: usize, monster: Monster) {
     let Monster {
         name_known_singular: _,
         name_known_plural,
@@ -59,19 +74,60 @@ fn output_markdown_row(id: usize, monster: &Monster) {
         melee_dice_exprs,
     } = monster;
 
-    let mut fields: Vec<String> = vec![];
+    let true_name = extract::monster_true_name(id);
 
-    // ID
-    fields.push(format!("{id}"));
+    let mut row = MarkdownRowBuilder::default();
 
-    // 確定名
-    fields.push(format!(
-        "{}<br>{name_known_plural}",
-        extract::monster_true_name(id)
-    ));
+    row.id(format!("{id}"));
 
-    // 不確定名
-    fields.push(format!("{name_unknown_singular}<br>{name_unknown_plural}",));
+    row.name_known(format!("{true_name}<br>{name_known_plural}"));
+    row.name_unknown(format!("{name_unknown_singular}<br>{name_unknown_plural}"));
 
-    println!("| {} |", fields.iter().join(" | "));
+    // TODO
+    row.kinds(format!(""));
+
+    row.build().unwrap().print();
+}
+
+#[derive(Clone, Debug, Builder)]
+#[builder(setter(into))]
+struct MarkdownRow {
+    id: String,
+
+    name_known: String,
+    name_unknown: String,
+
+    kinds: String,
+}
+
+impl MarkdownRow {
+    fn print(&self) {
+        let Self {
+            id,
+            name_known,
+            name_unknown,
+            kinds,
+        } = self;
+
+        let fields = [id, name_known, name_unknown, kinds];
+
+        println!("| {} |", fields.iter().join(" | "));
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum HoriAlign {
+    Left,
+    Center,
+    Right,
+}
+
+impl HoriAlign {
+    fn as_markdown(self) -> &'static str {
+        match self {
+            Self::Left => "--",
+            Self::Center => ":-:",
+            Self::Right => "--:",
+        }
+    }
 }
