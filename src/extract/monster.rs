@@ -34,7 +34,7 @@ pub fn extract_monster(rom: &Rom, id: usize) -> Monster {
     let (name_known_singular, name_known_plural, buf) = split_first_name_pair(bank, buf);
     let (name_unknown_singular, name_unknown_plural, buf) = split_first_name_pair(bank, buf);
     let (kinds, buf) = buf.split_first_u16le().unwrap();
-    let kinds = MonsterKinds::from_bits(kinds).unwrap();
+    let kinds = MonsterKinds::new(kinds).unwrap();
     let (spawn_dice_expr, buf) = split_first_dice_expr::<MonsterSpawnDiceExpr>(buf);
     let (hp_dice_expr, buf) = split_first_dice_expr::<MonsterHpDiceExpr>(buf);
     let (ac, buf) = buf.split_first_i8().unwrap();
@@ -47,12 +47,12 @@ pub fn extract_monster(rom: &Rom, id: usize) -> Monster {
     let (mage_spell_lv, buf) = buf.split_first_u8().unwrap();
     let (cleric_spell_lv, buf) = buf.split_first_u8().unwrap();
     let (breath_elements, buf) = buf.split_first_u8().unwrap();
-    let breath_elements = Elements::from_bits(breath_elements).unwrap();
+    let breath_elements = Elements::new(breath_elements).unwrap();
     let (spell_resistance, buf) = buf.split_first_u8().unwrap();
     let (element_resistance, buf) = buf.split_first_u8().unwrap();
-    let element_resistance = Elements::from_bits(element_resistance).unwrap();
+    let element_resistance = Elements::new(element_resistance).unwrap();
     let (abilitys, buf) = buf.split_first_u8().unwrap();
-    let abilitys = MonsterAbilitys::from_bits(abilitys).unwrap();
+    let abilitys = MonsterAbilitys::new(abilitys).unwrap();
     let (xp, buf) = split_first_bcd::<4>(buf);
     let xp = xp.to_u64();
     let (melee_count, mut buf) = buf.split_first_u8().unwrap();

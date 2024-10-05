@@ -5,9 +5,9 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.89"
-bitflags = "2.6.0"
 byteorder = "1.5.0"
 clap = { version = "4.5.19", features = ["derive"] }
 derive_builder = "0.20.1"
+flagset = "0.4.6"
 itertools = "0.13.0"
 num_enum = "0.7.3"

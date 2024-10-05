@@ -1,4 +1,4 @@
-use bitflags::bitflags;
+use flagset::{flags, FlagSet};
 
 use crate::dice::define_dice_expr;
 use crate::element::Elements;
@@ -32,94 +32,139 @@ pub struct Monster {
     pub melee_dice_exprs: Vec<MonsterMeleeDiceExpr>,
 }
 
-bitflags! {
-    /// モンスター種別マスク。
-    #[repr(transparent)]
-    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-    pub struct MonsterKinds: u16 {
+flags! {
+    /// モンスター種別。
+    #[repr(u16)]
+    pub enum MonsterKind: u16 {
         /// 戦士。
-        const FIGHTER = 1 << 0;
+        Fighter = 1 << 0,
         /// 魔術師。
-        const MAGE = 1 << 1;
+        Mage = 1 << 1,
         /// 僧侶。
-        const CLERIC = 1 << 2;
+        Cleric = 1 << 2,
         /// 盗賊。
-        const THIEF = 1 << 3;
+        Thief = 1 << 3,
         /// 小人。
-        const TINY = 1 << 4;
+        Tiny = 1 << 4,
         /// 巨人。
-        const GIANT = 1 << 5;
+        Giant = 1 << 5,
         /// 神話。
-        const MYTH = 1 << 6;
+        Myth = 1 << 6,
         /// 竜。
-        const DRAGON = 1 << 7;
+        Dragon = 1 << 7,
         /// 動物。
-        const ANIMAL = 1 << 8;
+        Animal = 1 << 8,
         /// (未使用)
-        const UNUSED_9 = 1 << 9;
+        Unused9 = 1 << 9,
         /// 不死。
-        const UNDEAD = 1 << 10;
+        Undead = 1 << 10,
         /// 悪魔。
-        const DEMON = 1 << 11;
+        Demon = 1 << 11,
         /// 昆虫。
-        const INSECT = 1 << 12;
+        Insect = 1 << 12,
         /// 魔法生物。
-        const ENCHANTED = 1 << 13;
+        Enchanted = 1 << 13,
         /// 獣人。
-        const LYCANTHROPE = 1 << 14;
+        Lycanthrope = 1 << 14,
         /// (未使用)
-        const UNUSED_15 = 1 << 15;
+        Unused15 = 1 << 15,
     }
 }
 
-impl MonsterKinds {
-    /// 含まれる全てのモンスター種別名を ',' で連結して表示する。
-    ///
-    /// 例: "戦士,魔術師"
-    pub fn display(self) -> MonsterKindsDisplay {
-        MonsterKindsDisplay(self)
+impl MonsterKind {
+    /// 正式名称を返す。
+    pub fn name(self) -> &'static str {
+        match self {
+            Self::Fighter => "戦士",
+            Self::Mage => "魔術師",
+            Self::Cleric => "僧侶",
+            Self::Thief => "盗賊",
+            Self::Tiny => "小人",
+            Self::Giant => "巨人",
+            Self::Myth => "神話",
+            Self::Dragon => "竜",
+            Self::Animal => "動物",
+            Self::Unused9 => "(未使用9)",
+            Self::Undead => "不死",
+            Self::Demon => "悪魔",
+            Self::Insect => "昆虫",
+            Self::Enchanted => "魔法生物",
+            Self::Lycanthrope => "獣人",
+            Self::Unused15 => "(未使用15)",
+        }
     }
 
-    /// 含まれる全てのモンスター種別略称を連結して表示する。
-    ///
-    /// 例: "戦魔"
-    pub fn display_abbrev(self) -> MonsterKindsDisplayAbbrev {
-        MonsterKindsDisplayAbbrev(self)
+    /// 略称を返す。
+    pub fn name_abbrev(self) -> &'static str {
+        match self {
+            Self::Fighter => "戦",
+            Self::Mage => "魔",
+            Self::Cleric => "僧",
+            Self::Thief => "盗",
+            Self::Tiny => "小",
+            Self::Giant => "巨",
+            Self::Myth => "神",
+            Self::Dragon => "竜",
+            Self::Animal => "動",
+            Self::Unused9 => "謎",
+            Self::Undead => "不",
+            Self::Demon => "悪",
+            Self::Insect => "昆",
+            Self::Enchanted => "傀", // 「傀儡」に由来。「魔」は重複するので。
+            Self::Lycanthrope => "獣",
+            Self::Unused15 => "謎",
+        }
+    }
+
+    /// 全てのモンスター種別を昇順で返す。
+    pub fn iter(
+    ) -> impl DoubleEndedIterator<Item = Self> + ExactSizeIterator + std::iter::FusedIterator + Clone
+    {
+        [
+            Self::Fighter,
+            Self::Mage,
+            Self::Cleric,
+            Self::Thief,
+            Self::Tiny,
+            Self::Giant,
+            Self::Myth,
+            Self::Dragon,
+            Self::Animal,
+            Self::Unused9,
+            Self::Undead,
+            Self::Demon,
+            Self::Insect,
+            Self::Enchanted,
+            Self::Lycanthrope,
+            Self::Unused15,
+        ]
+        .into_iter()
     }
 }
 
+/// モンスター種別マスク。
+pub type MonsterKinds = FlagSet<MonsterKind>;
+
+/// モンスター種別マスクをフォーマットし、正式名称のカンマ区切り文字列にする。
 #[derive(Debug)]
-pub struct MonsterKindsDisplay(MonsterKinds);
+pub struct MonsterKindDisplay(MonsterKinds);
 
-impl std::fmt::Display for MonsterKindsDisplay {
+impl MonsterKindDisplay {
+    pub fn new(kinds: MonsterKinds) -> Self {
+        Self(kinds)
+    }
+}
+
+impl std::fmt::Display for MonsterKindDisplay {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        const TABLE: [(MonsterKinds, &str); 16] = [
-            (MonsterKinds::FIGHTER, "戦士"),
-            (MonsterKinds::MAGE, "魔術師"),
-            (MonsterKinds::CLERIC, "僧侶"),
-            (MonsterKinds::THIEF, "盗賊"),
-            (MonsterKinds::TINY, "小人"),
-            (MonsterKinds::GIANT, "巨人"),
-            (MonsterKinds::MYTH, "神話"),
-            (MonsterKinds::DRAGON, "竜"),
-            (MonsterKinds::ANIMAL, "動物"),
-            (MonsterKinds::UNUSED_9, "(未使用9)"),
-            (MonsterKinds::UNDEAD, "不死"),
-            (MonsterKinds::DEMON, "悪魔"),
-            (MonsterKinds::INSECT, "昆虫"),
-            (MonsterKinds::ENCHANTED, "魔法生物"),
-            (MonsterKinds::LYCANTHROPE, "獣人"),
-            (MonsterKinds::UNUSED_15, "(未使用15)"),
-        ];
-
         let mut first = true;
-        for (kind, name) in TABLE {
+        for kind in MonsterKind::iter() {
             if self.0.contains(kind) {
                 if !first {
                     f.write_str(",")?;
-                    first = false;
                 }
-                f.write_str(name)?;
+                f.write_str(kind.name())?;
+                first = false;
             }
         }
 
@@ -127,33 +172,21 @@ impl std::fmt::Display for MonsterKindsDisplay {
     }
 }
 
+/// モンスター種別マスクをフォーマットし、略称を繋げた文字列にする。
 #[derive(Debug)]
-pub struct MonsterKindsDisplayAbbrev(MonsterKinds);
+pub struct MonsterKindDisplayAbbrev(MonsterKinds);
 
-impl std::fmt::Display for MonsterKindsDisplayAbbrev {
+impl MonsterKindDisplayAbbrev {
+    pub fn new(kinds: MonsterKinds) -> Self {
+        Self(kinds)
+    }
+}
+
+impl std::fmt::Display for MonsterKindDisplayAbbrev {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        const TABLE: [(MonsterKinds, &str); 16] = [
-            (MonsterKinds::FIGHTER, "戦"),
-            (MonsterKinds::MAGE, "魔"),
-            (MonsterKinds::CLERIC, "僧"),
-            (MonsterKinds::THIEF, "盗"),
-            (MonsterKinds::TINY, "小"),
-            (MonsterKinds::GIANT, "巨"),
-            (MonsterKinds::MYTH, "神"),
-            (MonsterKinds::DRAGON, "竜"),
-            (MonsterKinds::ANIMAL, "動"),
-            (MonsterKinds::UNUSED_9, "謎"),
-            (MonsterKinds::UNDEAD, "不"),
-            (MonsterKinds::DEMON, "悪"),
-            (MonsterKinds::INSECT, "昆"),
-            (MonsterKinds::ENCHANTED, "傀"), // 「傀儡」に由来。「魔」は重複するので。
-            (MonsterKinds::LYCANTHROPE, "獣"),
-            (MonsterKinds::UNUSED_15, "謎"),
-        ];
-
-        for (kind, name) in TABLE {
+        for kind in MonsterKind::iter() {
             if self.0.contains(kind) {
-                f.write_str(name)?;
+                f.write_str(kind.name_abbrev())?;
             }
         }
 
@@ -161,29 +194,78 @@ impl std::fmt::Display for MonsterKindsDisplayAbbrev {
     }
 }
 
-bitflags! {
-    /// モンスター特殊能力マスク。
-    #[repr(transparent)]
-    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-    pub struct MonsterAbilitys: u8 {
+flags! {
+    /// モンスター特殊能力。
+    #[repr(u8)]
+    pub enum MonsterAbility: u8 {
         /// 石化打撃。
-        const PETRIFY = 1 << 0;
+        Petrify = 1 << 0,
         /// 毒打撃。
-        const POISON = 1 << 1;
+        Poison = 1 << 1,
         /// 麻痺打撃。
-        const PARALYZE = 1 << 2;
+        Paralyze = 1 << 2,
         /// 首切り打撃。
-        const CRITICAL = 1 << 3;
+        Critical = 1 << 3,
         /// 睡眠弱点。
-        const SLEEPY = 1 << 4;
+        Sleepy = 1 << 4,
         /// 逃走する。
-        const FLEE = 1 << 5;
+        Flee = 1 << 5,
         /// 仲間を呼ぶ。
-        const CALL = 1 << 6;
+        Call = 1 << 6,
         /// (未使用)
-        const UNUSED_7 = 1 << 7;
+        Unused7 = 1 << 7,
     }
 }
+
+impl MonsterAbility {
+    /// 正式名称を返す。
+    pub fn name(self) -> &'static str {
+        match self {
+            Self::Petrify => "石化打撃",
+            Self::Poison => "毒打撃",
+            Self::Paralyze => "麻痺打撃",
+            Self::Critical => "首切り打撃",
+            Self::Sleepy => "睡眠弱点",
+            Self::Flee => "逃走する",
+            Self::Call => "仲間を呼ぶ",
+            Self::Unused7 => "(未使用7)",
+        }
+    }
+
+    /// 略称を返す。
+    pub fn name_abbrev(self) -> &'static str {
+        match self {
+            Self::Petrify => "石",
+            Self::Poison => "毒",
+            Self::Paralyze => "麻",
+            Self::Critical => "首",
+            Self::Sleepy => "眠",
+            Self::Flee => "逃",
+            Self::Call => "呼",
+            Self::Unused7 => "謎",
+        }
+    }
+
+    /// 全てのモンスター特殊能力を昇順で返す。
+    pub fn iter(
+    ) -> impl DoubleEndedIterator<Item = Self> + ExactSizeIterator + std::iter::FusedIterator + Clone
+    {
+        [
+            Self::Petrify,
+            Self::Poison,
+            Self::Paralyze,
+            Self::Critical,
+            Self::Sleepy,
+            Self::Flee,
+            Self::Call,
+            Self::Unused7,
+        ]
+        .into_iter()
+    }
+}
+
+/// モンスター特殊能力マスク。
+pub type MonsterAbilitys = FlagSet<MonsterAbility>;
 
 // モンスターの 1 グループあたりの出現数ダイス式。
 define_dice_expr!(MonsterSpawnDiceExpr);
