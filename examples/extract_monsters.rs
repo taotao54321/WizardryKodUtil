@@ -46,6 +46,7 @@ fn output_markdown_header() {
         (HoriAlign::Left, "ドロップ"),
         (HoriAlign::Left, "出現数"),
         (HoriAlign::Left, "後続"),
+        (HoriAlign::Left, "備考"),
     ];
 
     println!("| {} |", COLUMNS.iter().map(|col| col.1).join(" | "));
@@ -93,9 +94,7 @@ fn output_markdown_row(id: usize, monster: Monster) {
     row.kinds(format!("{}", MonsterKindDisplay::new(kinds)));
     row.hp(format!("{hp_dice_expr}"));
     row.ac(format!("{ac}"));
-
     row.melee(melee_dice_exprs.iter().join("<br>"));
-
     row.xp(format!("{xp}"));
     row.drop_(format!(
         "徘徊: {drop_table_id_wandering}<br>玄室: {drop_table_id_guardian}"
@@ -106,7 +105,28 @@ fn output_markdown_row(id: usize, monster: Monster) {
         extract::monster_true_name(usize::from(follower_monster_id))
     ));
 
+    {
+        let mut notes = Vec::<String>::new();
+        notes.extend(note_spells(mage_spell_lv, cleric_spell_lv));
+        // TODO
+        row.notes(notes.into_iter().join("<br>"));
+    }
+
     row.build().unwrap().print();
+}
+
+fn note_spells(mage: u8, cleric: u8) -> Option<String> {
+    if mage == 0 && cleric == 0 {
+        return None;
+    }
+
+    let mage = (mage > 0).then(|| format!("魔{mage}"));
+    let cleric = (cleric > 0).then(|| format!("僧{cleric}"));
+
+    Some(format!(
+        "呪文: {}",
+        mage.into_iter().chain(cleric).join(" ")
+    ))
 }
 
 #[derive(Clone, Debug, Builder)]
@@ -125,6 +145,8 @@ struct MarkdownRow {
     drop_: String,
     spawn: String,
     follower: String,
+
+    notes: String,
 }
 
 impl MarkdownRow {
@@ -141,6 +163,7 @@ impl MarkdownRow {
             drop_,
             spawn,
             follower,
+            notes,
         } = self;
 
         let fields = [
@@ -155,6 +178,7 @@ impl MarkdownRow {
             drop_,
             spawn,
             follower,
+            notes,
         ];
 
         println!("| {} |", fields.iter().join(" | "));
