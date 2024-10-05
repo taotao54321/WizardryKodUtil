@@ -42,6 +42,7 @@ fn output_markdown_header() {
         (HoriAlign::Left, "HP"),
         (HoriAlign::Right, "AC"),
         (HoriAlign::Right, "経験値"),
+        (HoriAlign::Left, "ドロップ"),
     ];
 
     println!("| {} |", COLUMNS.iter().map(|col| col.1).join(" | "));
@@ -90,6 +91,9 @@ fn output_markdown_row(id: usize, monster: Monster) {
     row.hp(format!("{hp_dice_expr}"));
     row.ac(format!("{ac}"));
     row.xp(format!("{xp}"));
+    row.drop_(format!(
+        "徘徊: {drop_table_id_wandering}<br>玄室: {drop_table_id_guardian}"
+    ));
 
     row.build().unwrap().print();
 }
@@ -106,6 +110,7 @@ struct MarkdownRow {
     hp: String,
     ac: String,
     xp: String,
+    drop_: String,
 }
 
 impl MarkdownRow {
@@ -118,9 +123,10 @@ impl MarkdownRow {
             hp,
             ac,
             xp,
+            drop_,
         } = self;
 
-        let fields = [id, name_known, name_unknown, kinds, hp, ac, xp];
+        let fields = [id, name_known, name_unknown, kinds, hp, ac, xp, drop_];
 
         println!("| {} |", fields.iter().join(" | "));
     }
