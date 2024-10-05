@@ -35,7 +35,7 @@ impl std::fmt::Debug for GameString {
         f.write_char('"')?;
 
         for &ch in &self.0 {
-            ch.fmt(f)?;
+            std::fmt::Display::fmt(&ch, f)?;
         }
 
         f.write_char('"')?;

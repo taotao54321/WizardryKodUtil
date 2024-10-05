@@ -2,10 +2,12 @@
 
 mod dice;
 mod element;
+pub mod extract;
 mod monster;
 mod rng;
 mod rom;
 mod string;
+pub mod util;
 
 pub use self::element::*;
 pub use self::monster::*;
