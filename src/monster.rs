@@ -24,6 +24,8 @@ pub struct Monster {
     pub follower_probability: u8,
     pub mage_spell_lv: u8,
     pub cleric_spell_lv: u8,
+    pub breath_elements: Elements,
+    pub spell_resistance: u8,
     pub element_resistance: Elements,
     pub abilitys: MonsterAbilitys,
     pub xp: u64,

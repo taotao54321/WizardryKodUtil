@@ -1,5 +1,6 @@
 use byteorder::{ByteOrder as _, LE};
 
+use crate::bcd::PackedBcdBe;
 use crate::element::Elements;
 use crate::monster::{
     Monster, MonsterAbilitys, MonsterHpDiceExpr, MonsterKinds, MonsterMeleeDiceExpr,
@@ -43,12 +44,23 @@ pub fn extract_monster(rom: &Rom, id: usize) -> Monster {
     let (follower_probability, buf) = buf.split_first_u8().unwrap();
     let (mage_spell_lv, buf) = buf.split_first_u8().unwrap();
     let (cleric_spell_lv, buf) = buf.split_first_u8().unwrap();
+    let (breath_elements, buf) = buf.split_first_u8().unwrap();
+    let breath_elements = Elements::from_bits(breath_elements).unwrap();
+    let (spell_resistance, buf) = buf.split_first_u8().unwrap();
     let (element_resistance, buf) = buf.split_first_u8().unwrap();
     let element_resistance = Elements::from_bits(element_resistance).unwrap();
     let (abilitys, buf) = buf.split_first_u8().unwrap();
     let abilitys = MonsterAbilitys::from_bits(abilitys).unwrap();
+    let (xp, buf) = split_first_bcd::<4>(buf);
+    let xp = xp.to_u64();
+    let (melee_count, mut buf) = buf.split_first_u8().unwrap();
 
-    // TODO
+    let mut melee_dice_exprs = Vec::<MonsterMeleeDiceExpr>::new();
+    for _ in 0..melee_count {
+        let dice_expr;
+        (dice_expr, buf) = split_first_dice_expr(buf);
+        melee_dice_exprs.push(dice_expr);
+    }
 
     Monster {
         name_known_singular,
@@ -68,11 +80,12 @@ pub fn extract_monster(rom: &Rom, id: usize) -> Monster {
         follower_probability,
         mage_spell_lv,
         cleric_spell_lv,
+        breath_elements,
+        spell_resistance,
         element_resistance,
         abilitys,
-        // TODO
-        xp: 0,
-        melee_dice_exprs: vec![],
+        xp,
+        melee_dice_exprs,
     }
 }
 
@@ -101,4 +114,11 @@ where
     let dice_expr = T::from(dice_expr);
 
     (dice_expr, buf)
+}
+
+fn split_first_bcd<const LEN: usize>(buf: &[u8]) -> (PackedBcdBe<LEN>, &[u8]) {
+    let (&bcd, buf) = buf.split_first_chunk::<LEN>().unwrap();
+    let bcd = PackedBcdBe::new(bcd).unwrap();
+
+    (bcd, buf)
 }

@@ -1,5 +1,6 @@
 //! NES 版 Wizardry KoD 関連ユーティリティ。
 
+pub mod bcd;
 mod dice;
 mod element;
 pub mod extract;
