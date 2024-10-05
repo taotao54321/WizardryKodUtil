@@ -41,6 +41,7 @@ fn output_markdown_header() {
         (HoriAlign::Left, "種別"),
         (HoriAlign::Left, "HP"),
         (HoriAlign::Right, "AC"),
+        (HoriAlign::Right, "経験値"),
     ];
 
     println!("| {} |", COLUMNS.iter().map(|col| col.1).join(" | "));
@@ -88,6 +89,7 @@ fn output_markdown_row(id: usize, monster: Monster) {
     row.kinds(format!("{}", MonsterKindDisplay::new(kinds)));
     row.hp(format!("{hp_dice_expr}"));
     row.ac(format!("{ac}"));
+    row.xp(format!("{xp}"));
 
     row.build().unwrap().print();
 }
@@ -103,6 +105,7 @@ struct MarkdownRow {
     kinds: String,
     hp: String,
     ac: String,
+    xp: String,
 }
 
 impl MarkdownRow {
@@ -114,9 +117,10 @@ impl MarkdownRow {
             kinds,
             hp,
             ac,
+            xp,
         } = self;
 
-        let fields = [id, name_known, name_unknown, kinds, hp, ac];
+        let fields = [id, name_known, name_unknown, kinds, hp, ac, xp];
 
         println!("| {} |", fields.iter().join(" | "));
     }
