@@ -1,5 +1,6 @@
 //! NES 版 Wizardry KoD 関連ユーティリティ。
 
+mod alignment;
 pub mod bcd;
 mod class;
 mod dice;
@@ -11,6 +12,7 @@ mod rom;
 mod string;
 pub mod util;
 
+pub use self::alignment::*;
 pub use self::class::*;
 pub use self::element::*;
 pub use self::monster::*;
