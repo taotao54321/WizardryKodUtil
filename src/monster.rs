@@ -327,7 +327,15 @@ impl MonsterSpawnDiceExpr {
 
 impl std::fmt::Display for MonsterSpawnDiceExpr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}d{}{:+}", self.count, self.face, self.bias_decoded())
+        let count = self.count;
+        let face = self.face;
+        let bias_decoded = self.bias_decoded();
+
+        if bias_decoded == 0 {
+            write!(f, "{count}d{face}")
+        } else {
+            write!(f, "{count}d{face}{bias_decoded:+}")
+        }
     }
 }
 
@@ -342,7 +350,15 @@ impl MonsterHpDiceExpr {
 
 impl std::fmt::Display for MonsterHpDiceExpr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}d{}{:+}", self.count, self.face, self.bias_decoded())
+        let count = self.count;
+        let face = self.face;
+        let bias_decoded = self.bias_decoded();
+
+        if bias_decoded == 0 {
+            write!(f, "{count}d{face}")
+        } else {
+            write!(f, "{count}d{face}{bias_decoded:+}")
+        }
     }
 }
 
