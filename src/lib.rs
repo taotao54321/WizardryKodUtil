@@ -1,5 +1,6 @@
 //! NES 版 Wizardry KoD 関連ユーティリティ。
 
+mod dice;
 mod monster;
 mod rng;
 mod rom;

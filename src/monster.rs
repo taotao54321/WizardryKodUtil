@@ -1,5 +1,6 @@
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 
+use crate::dice::define_dice_expr;
 use crate::string::GameString;
 
 /// モンスター。
@@ -11,6 +12,17 @@ pub struct Monster {
     name_unknown_plural: GameString,
 
     kind: MonsterKind,
+    spawn_dice_expr: MonsterSpawnDiceExpr,
+    hp_dice_expr: MonsterHpDiceExpr,
+    ac: i8,
+    drain_xl: u8,
+    healing: i8,
+    drop_table_id_wandering: u8,
+    drop_table_id_guardian: u8,
+    follower_monster_id: u8,
+    follower_probability: u8,
+    mage_spell_lv: u8,
+    cleric_spell_lv: u8,
 }
 
 /// モンスター種別。
@@ -47,3 +59,7 @@ pub enum MonsterKind {
     /// 獣人。
     Lycanthrope = 14,
 }
+
+define_dice_expr!(MonsterSpawnDiceExpr);
+
+define_dice_expr!(MonsterHpDiceExpr);
