@@ -72,3 +72,52 @@ impl Element {
 
 /// 攻撃属性マスク。
 pub type Elements = FlagSet<Element>;
+
+/// 攻撃属性マスクをフォーマットし、正式名称のカンマ区切り文字列にする。
+#[derive(Debug)]
+pub struct ElementsDisplay(Elements);
+
+impl ElementsDisplay {
+    pub fn new(elements: Elements) -> Self {
+        Self(elements)
+    }
+}
+
+impl std::fmt::Display for ElementsDisplay {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut first = true;
+        for element in Element::iter() {
+            if self.0.contains(element) {
+                if !first {
+                    f.write_str(",")?;
+                }
+                f.write_str(element.name())?;
+                first = false;
+            }
+        }
+
+        Ok(())
+    }
+}
+
+/// 攻撃属性マスクをフォーマットし、略称を繋げた文字列にする。
+#[derive(Debug)]
+pub struct ElementsDisplayAbbrev(Elements);
+
+impl ElementsDisplayAbbrev {
+    pub fn new(elements: Elements) -> Self {
+        Self(elements)
+    }
+}
+
+impl std::fmt::Display for ElementsDisplayAbbrev {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for kind in Element::iter() {
+            if self.0.contains(kind) {
+                f.write_str(kind.name_abbrev())?;
+            }
+        }
+
+        Ok(())
+    }
+}

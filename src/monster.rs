@@ -267,6 +267,55 @@ impl MonsterAbility {
 /// モンスター特殊能力マスク。
 pub type MonsterAbilitys = FlagSet<MonsterAbility>;
 
+/// モンスター特殊能力マスクをフォーマットし、正式名称のカンマ区切り文字列にする。
+#[derive(Debug)]
+pub struct MonsterAbilitysDisplay(MonsterAbilitys);
+
+impl MonsterAbilitysDisplay {
+    pub fn new(abilitys: MonsterAbilitys) -> Self {
+        Self(abilitys)
+    }
+}
+
+impl std::fmt::Display for MonsterAbilitysDisplay {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut first = true;
+        for ability in MonsterAbility::iter() {
+            if self.0.contains(ability) {
+                if !first {
+                    f.write_str(",")?;
+                }
+                f.write_str(ability.name())?;
+                first = false;
+            }
+        }
+
+        Ok(())
+    }
+}
+
+/// モンスター特殊能力マスクをフォーマットし、略称を繋げた文字列にする。
+#[derive(Debug)]
+pub struct MonsterAbilitysDisplayAbbrev(MonsterAbilitys);
+
+impl MonsterAbilitysDisplayAbbrev {
+    pub fn new(abilitys: MonsterAbilitys) -> Self {
+        Self(abilitys)
+    }
+}
+
+impl std::fmt::Display for MonsterAbilitysDisplayAbbrev {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for ability in MonsterAbility::iter() {
+            if self.0.contains(ability) {
+                f.write_str(ability.name_abbrev())?;
+            }
+        }
+
+        Ok(())
+    }
+}
+
 // モンスターの 1 グループあたりの出現数ダイス式。
 define_dice_expr!(MonsterSpawnDiceExpr);
 
