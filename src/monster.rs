@@ -1,6 +1,7 @@
 use bitflags::bitflags;
 
 use crate::dice::define_dice_expr;
+use crate::element::Elements;
 use crate::string::GameString;
 
 /// モンスター。
@@ -23,6 +24,7 @@ pub struct Monster {
     follower_probability: u8,
     mage_spell_lv: u8,
     cleric_spell_lv: u8,
+    element_resistance: Elements,
 }
 
 bitflags! {
