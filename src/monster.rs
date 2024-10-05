@@ -72,6 +72,95 @@ bitflags! {
     }
 }
 
+impl MonsterKinds {
+    /// 含まれる全てのモンスター種別名を ',' で連結して表示する。
+    ///
+    /// 例: "戦士,魔術師"
+    pub fn display(self) -> MonsterKindsDisplay {
+        MonsterKindsDisplay(self)
+    }
+
+    /// 含まれる全てのモンスター種別略称を連結して表示する。
+    ///
+    /// 例: "戦魔"
+    pub fn display_abbrev(self) -> MonsterKindsDisplayAbbrev {
+        MonsterKindsDisplayAbbrev(self)
+    }
+}
+
+#[derive(Debug)]
+pub struct MonsterKindsDisplay(MonsterKinds);
+
+impl std::fmt::Display for MonsterKindsDisplay {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        const TABLE: [(MonsterKinds, &str); 16] = [
+            (MonsterKinds::FIGHTER, "戦士"),
+            (MonsterKinds::MAGE, "魔術師"),
+            (MonsterKinds::CLERIC, "僧侶"),
+            (MonsterKinds::THIEF, "盗賊"),
+            (MonsterKinds::TINY, "小人"),
+            (MonsterKinds::GIANT, "巨人"),
+            (MonsterKinds::MYTH, "神話"),
+            (MonsterKinds::DRAGON, "竜"),
+            (MonsterKinds::ANIMAL, "動物"),
+            (MonsterKinds::UNUSED_9, "(未使用9)"),
+            (MonsterKinds::UNDEAD, "不死"),
+            (MonsterKinds::DEMON, "悪魔"),
+            (MonsterKinds::INSECT, "昆虫"),
+            (MonsterKinds::ENCHANTED, "魔法生物"),
+            (MonsterKinds::LYCANTHROPE, "獣人"),
+            (MonsterKinds::UNUSED_15, "(未使用15)"),
+        ];
+
+        let mut first = true;
+        for (kind, name) in TABLE {
+            if self.0.contains(kind) {
+                if !first {
+                    f.write_str(",")?;
+                    first = false;
+                }
+                f.write_str(name)?;
+            }
+        }
+
+        Ok(())
+    }
+}
+
+#[derive(Debug)]
+pub struct MonsterKindsDisplayAbbrev(MonsterKinds);
+
+impl std::fmt::Display for MonsterKindsDisplayAbbrev {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        const TABLE: [(MonsterKinds, &str); 16] = [
+            (MonsterKinds::FIGHTER, "戦"),
+            (MonsterKinds::MAGE, "魔"),
+            (MonsterKinds::CLERIC, "僧"),
+            (MonsterKinds::THIEF, "盗"),
+            (MonsterKinds::TINY, "小"),
+            (MonsterKinds::GIANT, "巨"),
+            (MonsterKinds::MYTH, "神"),
+            (MonsterKinds::DRAGON, "竜"),
+            (MonsterKinds::ANIMAL, "動"),
+            (MonsterKinds::UNUSED_9, "謎"),
+            (MonsterKinds::UNDEAD, "不"),
+            (MonsterKinds::DEMON, "悪"),
+            (MonsterKinds::INSECT, "昆"),
+            (MonsterKinds::ENCHANTED, "傀"), // 「傀儡」に由来。「魔」は重複するので。
+            (MonsterKinds::LYCANTHROPE, "獣"),
+            (MonsterKinds::UNUSED_15, "謎"),
+        ];
+
+        for (kind, name) in TABLE {
+            if self.0.contains(kind) {
+                f.write_str(name)?;
+            }
+        }
+
+        Ok(())
+    }
+}
+
 bitflags! {
     /// モンスター特殊能力マスク。
     #[repr(transparent)]

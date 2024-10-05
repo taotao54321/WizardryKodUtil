@@ -83,8 +83,7 @@ fn output_markdown_row(id: usize, monster: Monster) {
     row.name_known(format!("{true_name}<br>{name_known_plural}"));
     row.name_unknown(format!("{name_unknown_singular}<br>{name_unknown_plural}"));
 
-    // TODO
-    row.kinds(format!(""));
+    row.kinds(format!("{}", kinds.display()));
 
     row.build().unwrap().print();
 }
