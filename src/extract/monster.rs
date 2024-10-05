@@ -10,14 +10,16 @@ use crate::rom::Rom;
 use crate::string::GameString;
 use crate::util::{SliceExt as _, U8SliceExt as _};
 
-const MONSTER_COUNT: usize = 90;
+pub const MONSTER_COUNT: usize = 90;
 
+/// 全モンスターをIDの昇順で抽出する。
 pub fn extract_monsters(rom: &Rom) -> Vec<Monster> {
     (0..MONSTER_COUNT)
         .map(|id| extract_monster(rom, id))
         .collect()
 }
 
+/// 指定したIDのモンスターを抽出する。
 pub fn extract_monster(rom: &Rom, id: usize) -> Monster {
     assert!(id < MONSTER_COUNT);
 
@@ -121,4 +123,102 @@ fn split_first_bcd<const LEN: usize>(buf: &[u8]) -> (PackedBcdBe<LEN>, &[u8]) {
     let bcd = PackedBcdBe::new(bcd).unwrap();
 
     (bcd, buf)
+}
+
+/// 指定したIDのモンスターの正体名を返す。
+pub fn monster_true_name(id: usize) -> &'static str {
+    const TABLE: [&str; MONSTER_COUNT] = [
+        "Bubbly Slime",
+        "Orc",
+        "Kobold",
+        "Undead Kobold",
+        "Dink",
+        "Hippopotamus",
+        "Magician",
+        "Depraved Cleric",
+        "Creeping Coin?",
+        "Highwayman",
+        "Man at Arms",
+        "Zombie",
+        "Mummy",
+        "Witch",
+        "Ninja",
+        "Rabid Rat",
+        "Were Panther",
+        "Fuzzball [A]",
+        "Vorpal Bunny",
+        "Cleric",
+        "Dragon Fly",
+        "Doom Toad",
+        "Smog Beast",
+        "Banshee",
+        "Boring Beetle",
+        "Swordsman",
+        "Blade Bear",
+        "Were Lion",
+        "Seraph",
+        "Master Ninja",
+        "Carrier",
+        "Rhino Beetle",
+        "Fuzzball [B]",
+        "Were Amoeba",
+        "No-see um",
+        "Sorceress",
+        "Medusalizard",
+        "Horrid Hound",
+        "Scorpion",
+        "Evil Eye",
+        "Manticore",
+        "Webspinner",
+        "Constrictor",
+        "Lesser Demon",
+        "Scryll",
+        "Ferocious Fiend",
+        "Orc Lord",
+        "Giant Bat",
+        "Were Bat",
+        "Vampire Bat",
+        "Corrosive Slime",
+        "Foaming Mold",
+        "Murphy's Ghost",
+        "Succubus",
+        "Giant Wasp",
+        "Giant Viper",
+        "The High Master",
+        "High Cleric [A]",
+        "Arch Mage [A]",
+        "Poison Giant",
+        "Vampire",
+        "Will o' Wisp",
+        "Greater Demon",
+        "Air Giant",
+        "Giant Zombie",
+        "Fuzzball [C]",
+        "Giant Hornet",
+        "Giant Crab",
+        "Blob",
+        "Arch Mage [B]",
+        "High Cleric [B]",
+        "High Master",
+        "Iron Golem",
+        "Black Dragon",
+        "Gold Dragon",
+        "Flack",
+        "Sidelle",
+        "Raver Lord",
+        "Mifune",
+        "Arch Demon",
+        "Maelific",
+        "Vampire Lord",
+        "Lycurgus",
+        "Demon Lord",
+        "Kobold King",
+        "Magic Sword",
+        "Magic Helmet",
+        "Magic Shield",
+        "Magic Gauntlet",
+        "Magic Armor",
+    ];
+
+    TABLE[id]
 }
