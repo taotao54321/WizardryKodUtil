@@ -1,4 +1,4 @@
-use num_enum::{IntoPrimitive, TryFromPrimitive};
+use bitflags::bitflags;
 
 use crate::dice::define_dice_expr;
 use crate::string::GameString;
@@ -11,7 +11,7 @@ pub struct Monster {
     name_unknown_singular: GameString,
     name_unknown_plural: GameString,
 
-    kind: MonsterKind,
+    kinds: MonsterKinds,
     spawn_dice_expr: MonsterSpawnDiceExpr,
     hp_dice_expr: MonsterHpDiceExpr,
     ac: i8,
@@ -25,39 +25,44 @@ pub struct Monster {
     cleric_spell_lv: u8,
 }
 
-/// モンスター種別。
-#[repr(u8)]
-#[derive(Clone, Copy, Debug, Eq, PartialEq, IntoPrimitive, TryFromPrimitive)]
-pub enum MonsterKind {
-    /// 戦士。
-    Fighter = 0,
-    /// 魔術師。
-    Mage = 1,
-    /// 僧侶。
-    Cleric = 2,
-    /// 盗賊。
-    Thief = 3,
-    /// 小人。
-    Tiny = 4,
-    /// 巨人。
-    Giant = 5,
-    /// 神話。
-    Myth = 6,
-    /// 竜。
-    Dragon = 7,
-    /// 動物。
-    Animal = 8,
-    // 9: 欠番
-    /// 不死。
-    Undead = 10,
-    /// 悪魔。
-    Demon = 11,
-    /// 昆虫。
-    Insect = 12,
-    /// 魔法生物。
-    Enchanted = 13,
-    /// 獣人。
-    Lycanthrope = 14,
+bitflags! {
+    /// モンスター種別マスク。
+    #[repr(transparent)]
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+    pub struct MonsterKinds: u16 {
+        /// 戦士。
+        const FIGHTER = 1 << 0;
+        /// 魔術師。
+        const MAGE = 1 << 1;
+        /// 僧侶。
+        const CLERIC = 1 << 2;
+        /// 盗賊。
+        const THIEF = 1 << 3;
+        /// 小人。
+        const TINY = 1 << 4;
+        /// 巨人。
+        const GIANT = 1 << 5;
+        /// 神話。
+        const MYTH = 1 << 6;
+        /// 竜。
+        const DRAGON = 1 << 7;
+        /// 動物。
+        const ANIMAL = 1 << 8;
+        /// 欠番 9。
+        const UNUSED_9 = 1 << 9;
+        /// 不死。
+        const UNDEAD = 1 << 10;
+        /// 悪魔。
+        const DEMON = 1 << 11;
+        /// 昆虫。
+        const INSECT = 1 << 12;
+        /// 魔法生物。
+        const ENCHANTED = 1 << 13;
+        /// 獣人。
+        const LYCANTHROPE = 1 << 14;
+        /// 欠番 15。
+        const UNUSED_15 = 1 << 15;
+    }
 }
 
 define_dice_expr!(MonsterSpawnDiceExpr);
