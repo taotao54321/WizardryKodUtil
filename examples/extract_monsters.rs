@@ -44,6 +44,7 @@ fn output_markdown_header() {
         (HoriAlign::Right, "経験値"),
         (HoriAlign::Left, "ドロップ"),
         (HoriAlign::Left, "出現数"),
+        (HoriAlign::Left, "後続"),
     ];
 
     println!("| {} |", COLUMNS.iter().map(|col| col.1).join(" | "));
@@ -96,6 +97,10 @@ fn output_markdown_row(id: usize, monster: Monster) {
         "徘徊: {drop_table_id_wandering}<br>玄室: {drop_table_id_guardian}"
     ));
     row.spawn(format!("{spawn_dice_expr}"));
+    row.follower(format!(
+        "{} ({follower_probability} %)",
+        extract::monster_true_name(usize::from(follower_monster_id))
+    ));
 
     row.build().unwrap().print();
 }
@@ -114,6 +119,7 @@ struct MarkdownRow {
     xp: String,
     drop_: String,
     spawn: String,
+    follower: String,
 }
 
 impl MarkdownRow {
@@ -128,6 +134,7 @@ impl MarkdownRow {
             xp,
             drop_,
             spawn,
+            follower,
         } = self;
 
         let fields = [
@@ -140,6 +147,7 @@ impl MarkdownRow {
             xp,
             drop_,
             spawn,
+            follower,
         ];
 
         println!("| {} |", fields.iter().join(" | "));
