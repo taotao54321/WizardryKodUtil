@@ -19,7 +19,7 @@ bitflags! {
         const PETRIFY = 1 << 5;
         /// 呪文。
         const SPELL = 1 << 6;
-        /// 欠番 7。
+        /// (未使用)
         const UNUSED_7 = 1 << 7;
     }
 }

@@ -25,6 +25,7 @@ pub struct Monster {
     mage_spell_lv: u8,
     cleric_spell_lv: u8,
     element_resistance: Elements,
+    abilitys: MonsterAbilitys,
 }
 
 bitflags! {
@@ -50,7 +51,7 @@ bitflags! {
         const DRAGON = 1 << 7;
         /// 動物。
         const ANIMAL = 1 << 8;
-        /// 欠番 9。
+        /// (未使用)
         const UNUSED_9 = 1 << 9;
         /// 不死。
         const UNDEAD = 1 << 10;
@@ -62,8 +63,32 @@ bitflags! {
         const ENCHANTED = 1 << 13;
         /// 獣人。
         const LYCANTHROPE = 1 << 14;
-        /// 欠番 15。
+        /// (未使用)
         const UNUSED_15 = 1 << 15;
+    }
+}
+
+bitflags! {
+    /// モンスター特殊能力マスク。
+    #[repr(transparent)]
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+    pub struct MonsterAbilitys: u8 {
+        /// 石化打撃。
+        const PETRIFY = 1 << 0;
+        /// 毒打撃。
+        const POISON = 1 << 1;
+        /// 麻痺打撃。
+        const PARALYZE = 1 << 2;
+        /// 首切り打撃。
+        const CRITICAL = 1 << 3;
+        /// 睡眠弱点。
+        const SLEEPY = 1 << 4;
+        /// 逃走する。
+        const FLEE = 1 << 5;
+        /// 仲間を呼ぶ。
+        const CALL = 1 << 6;
+        /// (未使用)
+        const UNUSED_7 = 1 << 7;
     }
 }
 
