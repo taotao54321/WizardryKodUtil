@@ -104,6 +104,7 @@ fn output_markdown_row(id: usize, item: Item) {
         notes.extend(note_alignment(alignment));
         notes.extend(note_melee_accuracy(melee_accuracy));
         notes.extend(note_extra_melee_count(extra_melee_count));
+        notes.extend(note_critical(critical));
         // TODO
         row.notes(notes.into_iter().join("<br>"));
     }
@@ -125,6 +126,10 @@ fn note_melee_accuracy(melee_accuracy: i8) -> Option<String> {
 
 fn note_extra_melee_count(extra_melee_count: u8) -> Option<String> {
     (extra_melee_count != 0).then(|| format!("攻撃回数: {extra_melee_count:+}"))
+}
+
+fn note_critical(critical: bool) -> Option<String> {
+    critical.then(|| "クリティカル".to_owned())
 }
 
 fn fmt_ac(ac: i8) -> String {
