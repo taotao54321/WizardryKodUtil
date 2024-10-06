@@ -102,6 +102,7 @@ fn output_markdown_row(id: usize, item: Item) {
         let mut notes = Vec::<String>::new();
         notes.extend(note_cursed(cursed));
         notes.extend(note_alignment(alignment));
+        notes.extend(note_melee_accuracy(melee_accuracy));
         // TODO
         row.notes(notes.into_iter().join("<br>"));
     }
@@ -115,6 +116,10 @@ fn note_cursed(cursed: bool) -> Option<String> {
 
 fn note_alignment(alignment: Option<Alignment>) -> Option<String> {
     alignment.map(|alignment| format!("性格限定装備: {}", alignment.name_ja()))
+}
+
+fn note_melee_accuracy(melee_accuracy: i8) -> Option<String> {
+    (melee_accuracy != 0).then(|| format!("命中{melee_accuracy:+}"))
 }
 
 fn fmt_ac(ac: i8) -> String {
