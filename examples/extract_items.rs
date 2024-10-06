@@ -109,7 +109,12 @@ fn output_markdown_row(id: usize, item: Item) {
         notes.extend(note_repel(repel_monster_kinds));
         notes.extend(note_element_resistance(element_resistance));
         notes.extend(note_healing(healing));
-        // TODO
+        // TODO: use, special_power
+        notes.extend(note_break(
+            break_item_id,
+            break_probability,
+            usable_in_camp || usable_in_battle || special_power_id != 0,
+        ));
         row.notes(notes.into_iter().join("<br>"));
     }
 
@@ -160,6 +165,28 @@ fn note_element_resistance(elements: Elements) -> Option<String> {
 
 fn note_healing(healing: i8) -> Option<String> {
     (healing != 0).then(|| format!("ヒーリング: {healing:+}"))
+}
+
+fn note_use(use_spell_id: u8, usable_in_camp: bool, usable_in_battle: bool) -> Option<String> {
+    todo!();
+}
+
+fn note_special_power(special_power_id: u8) -> Option<String> {
+    todo!();
+}
+
+fn note_break(break_item_id: u8, break_probability: u8, has_spell_or_sp: bool) -> Option<String> {
+    // 以下のいずれかの条件を満たすとき表示:
+    //
+    // * 壊れた後がガラクタでない
+    // * 壊れる確率が 0 でない
+    // * 使用効果またはSPを持つ
+    let cond = break_item_id != 0 || break_probability != 0 || has_spell_or_sp;
+
+    cond.then(|| {
+        let true_name = extract::item_true_name(usize::from(break_item_id));
+        format!("壊: {true_name} ({break_probability}/256)")
+    })
 }
 
 fn fmt_ac(ac: i8) -> String {
