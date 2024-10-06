@@ -33,6 +33,7 @@ pub struct Item {
     pub ac: i8,
     pub melee_accuracy: i8,
     pub melee_dice_expr: ItemMeleeDiceExpr,
+    pub extra_melee_count: u8,
     pub critical: bool,
     /// 倍打対象のモンスター種別マスク。
     pub slay_monster_kinds: MonsterKinds,
