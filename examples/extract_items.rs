@@ -39,6 +39,9 @@ fn output_markdown_header() {
         (HoriAlign::Left, "確定名"),
         (HoriAlign::Left, "不確定名"),
         (HoriAlign::Left, "種別"),
+        (HoriAlign::Right, "AC"),
+        (HoriAlign::Left, "ダメージ"),
+        (HoriAlign::Right, "買値"),
     ];
 
     println!("| {} |", COLUMNS.iter().map(|col| col.1).join(" | "));
@@ -84,10 +87,22 @@ fn output_markdown_row(id: usize, item: Item) {
     row.name_unknown(format!("{name_unknown}"));
 
     row.kind(format!("{}", kind.name()));
+    // TODO: 呪いありの場合のAC表示
+    row.ac(fmt_ac(ac));
+    row.melee_dice_expr(format!("{melee_dice_expr}"));
+    row.price(format!("{price}"));
 
     // TODO
 
     row.build().unwrap().print();
+}
+
+fn fmt_ac(ac: i8) -> String {
+    if ac == 0 {
+        "0".to_owned()
+    } else {
+        format!("{:+}", -ac)
+    }
 }
 
 #[derive(Clone, Debug, Builder)]
@@ -99,6 +114,9 @@ struct MarkdownRow {
     name_unknown: String,
 
     kind: String,
+    ac: String,
+    melee_dice_expr: String,
+    price: String,
 }
 
 impl MarkdownRow {
@@ -108,9 +126,20 @@ impl MarkdownRow {
             name_known,
             name_unknown,
             kind,
+            ac,
+            melee_dice_expr,
+            price,
         } = self;
 
-        let fields = [id, name_known, name_unknown, kind];
+        let fields = [
+            id,
+            name_known,
+            name_unknown,
+            kind,
+            ac,
+            melee_dice_expr,
+            price,
+        ];
 
         println!("| {} |", fields.iter().join(" | "));
     }
