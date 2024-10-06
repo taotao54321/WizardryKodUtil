@@ -43,6 +43,7 @@ fn output_markdown_header() {
         (HoriAlign::Right, "AC"),
         (HoriAlign::Left, "ダメージ"),
         (HoriAlign::Right, "買値"),
+        (HoriAlign::Left, "備考"),
     ];
 
     println!("| {} |", COLUMNS.iter().map(|col| col.1).join(" | "));
@@ -97,9 +98,18 @@ fn output_markdown_row(id: usize, item: Item) {
     row.melee_dice_expr(format!("{melee_dice_expr}"));
     row.price(format!("{price}"));
 
-    // TODO
+    {
+        let mut notes = Vec::<String>::new();
+        notes.extend(note_cursed(cursed));
+        // TODO
+        row.notes(notes.into_iter().join("<br>"));
+    }
 
     row.build().unwrap().print();
+}
+
+fn note_cursed(cursed: bool) -> Option<String> {
+    cursed.then(|| "呪い".to_owned())
 }
 
 fn fmt_ac(ac: i8) -> String {
@@ -123,6 +133,8 @@ struct MarkdownRow {
     ac: String,
     melee_dice_expr: String,
     price: String,
+
+    notes: String,
 }
 
 impl MarkdownRow {
@@ -136,6 +148,7 @@ impl MarkdownRow {
             ac,
             melee_dice_expr,
             price,
+            notes,
         } = self;
 
         let fields = [
@@ -147,6 +160,7 @@ impl MarkdownRow {
             ac,
             melee_dice_expr,
             price,
+            notes,
         ];
 
         println!("| {} |", fields.iter().join(" | "));
