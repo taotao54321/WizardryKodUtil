@@ -1,3 +1,5 @@
+use std::fmt::Write as _;
+
 use flagset::{flags, FlagSet};
 
 flags! {
@@ -122,20 +124,26 @@ impl std::fmt::Display for ClassesDisplay {
 }
 
 /// 職業マスクをフォーマットし、頭文字を繋げた文字列にする。
+/// 含まれない職業の部分は指定した文字でパディングする。
 #[derive(Debug)]
-pub struct ClassesDisplayInitial(Classes);
+pub struct ClassesDisplayInitialPad {
+    classes: Classes,
+    pad: char,
+}
 
-impl ClassesDisplayInitial {
-    pub fn new(classes: Classes) -> Self {
-        Self(classes)
+impl ClassesDisplayInitialPad {
+    pub fn new(classes: Classes, pad: char) -> Self {
+        Self { classes, pad }
     }
 }
 
-impl std::fmt::Display for ClassesDisplayInitial {
+impl std::fmt::Display for ClassesDisplayInitialPad {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for class in Class::iter() {
-            if self.0.contains(class) {
+            if self.classes.contains(class) {
                 f.write_str(class.name_initial())?;
+            } else {
+                f.write_char(self.pad)?;
             }
         }
 
