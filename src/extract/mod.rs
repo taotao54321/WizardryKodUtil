@@ -2,6 +2,10 @@
 
 mod item;
 mod monster;
+mod special_power;
+mod spell;
 
 pub use self::item::*;
 pub use self::monster::*;
+pub use self::special_power::*;
+pub use self::spell::*;
