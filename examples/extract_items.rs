@@ -110,7 +110,7 @@ fn output_markdown_row(id: usize, item: Item) {
         notes.extend(note_element_resistance(element_resistance));
         notes.extend(note_healing(healing));
         notes.extend(note_use(use_spell_id, usable_in_camp, usable_in_battle));
-        // TODO: special_power
+        notes.extend(note_special_power(special_power_id));
         notes.extend(note_break(
             break_item_id,
             break_probability,
@@ -181,7 +181,10 @@ fn note_use(use_spell_id: u8, usable_in_camp: bool, usable_in_battle: bool) -> O
 }
 
 fn note_special_power(special_power_id: u8) -> Option<String> {
-    todo!();
+    (special_power_id != 0).then(|| {
+        let desc = extract::special_power_description(usize::from(special_power_id));
+        format!("SP: {desc}")
+    })
 }
 
 fn note_break(break_item_id: u8, break_probability: u8, has_spell_or_sp: bool) -> Option<String> {
