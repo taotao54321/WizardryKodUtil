@@ -1,10 +1,8 @@
 use flagset::{flags, FlagSet};
-use num_enum::TryFromPrimitive;
 
 flags! {
     /// 性格。
     #[repr(u8)]
-    #[derive(TryFromPrimitive)]
     pub enum Alignment: u8 {
         Good = 1 << 0,
         Neutral = 1 << 1,
@@ -15,7 +13,12 @@ flags! {
 impl Alignment {
     /// 性格ID (`0..=2`) から性格を作る。
     pub fn from_id(id: u8) -> Option<Self> {
-        (id <= 2).then(|| Self::try_from(1 << id).unwrap())
+        match id {
+            0 => Some(Self::Good),
+            1 => Some(Self::Neutral),
+            2 => Some(Self::Evil),
+            _ => None,
+        }
     }
 
     /// 性格ID (`0..=2`) を返す。

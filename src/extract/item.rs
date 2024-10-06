@@ -6,7 +6,7 @@ use crate::item::{Item, ItemKind, ItemMeleeDiceExpr};
 use crate::monster::MonsterKinds;
 use crate::rom::Rom;
 use crate::string::GameString;
-use crate::util::{SliceExt as _, U8SliceExt as _};
+use crate::util::U8SliceExt as _;
 
 pub const ITEM_COUNT: usize = 138;
 
@@ -102,9 +102,12 @@ fn split_first_name<'a>(bank: &'a [u8], buf: &'a [u8]) -> (GameString, &'a [u8])
 }
 
 fn read_name(buf: &[u8]) -> GameString {
-    let (name, _) = buf.split_once_(|&b| b == 0).unwrap();
+    // NOTE: アイテムの場合、名前データは最大 16 バイトで、16 バイトに満たない場合のみ 0 終端されている。
+    // (原作で 0 終端されていないのは "RING of SUFFOCATION" (16 バイト) のみ)
 
-    GameString::from_bytes(name).unwrap()
+    let i = buf.iter().take(16).position(|&b| b == 0).unwrap_or(16);
+
+    GameString::from_bytes(&buf[..i]).unwrap()
 }
 
 fn split_first_bcd<const LEN: usize>(buf: &[u8]) -> (PackedBcdBe<LEN>, &[u8]) {
@@ -125,5 +128,146 @@ fn split_first_melee_dice_expr(buf: &[u8]) -> (ItemMeleeDiceExpr, &[u8]) {
 
 /// 指定したIDのアイテムの正体名を返す。
 pub fn item_true_name(id: usize) -> &'static str {
-    todo!();
+    const TABLE: [&str; ITEM_COUNT] = [
+        "BROKEN ITEM",
+        "LONG SWORD",
+        "SHORT SWORD",
+        "ANOINTED MACE",
+        "ANOINTED FLAIL",
+        "STAFF",
+        "DAGGER",
+        "BUCKLER",
+        "SHIELD",
+        "ROBES",
+        "LEATHER ARMOR",
+        "CHAIN MAIL",
+        "BREAST PLATE",
+        "PLATE MAIL",
+        "HELM",
+        "薬之CURING",
+        "薬之NEUTRALIZING",
+        "SWORD之SLICING",
+        "BLADE之BITING",
+        "MACE之POUNDING",
+        "ROD之IRON",
+        "巻之SLEEP",
+        "PADDED LEATHER",
+        "SHINY CHAIN",
+        "STURDY PLATE",
+        "IRON SHIELD",
+        "BODY ARMOR",
+        "巻之PAIN",
+        "巻之FIRE",
+        "SWORD之SWISHES",
+        "EPEE之DISMAY",
+        "MACE之MISFORTUNE",
+        "STUDLY STAFF",
+        "SLAYER之DRAGONS",
+        "HELM之HARDINESS",
+        "ROTTEN LEATHER",
+        "CORRODED CHAIN",
+        "BROKEN B-PLATE",
+        "SCREWY SHIELD",
+        "RING之JEWELS",
+        "巻之AGONY",
+        "薬之GLASS",
+        "SWORD之SLASHING",
+        "EPEE之EXCELLENCE",
+        "MACE之POWER",
+        "巻之BRIGHTNESS",
+        "巻之DARKNESS",
+        "GLOVES之COPPER",
+        "TREATED LEATHER",
+        "ELVEN CHAIN",
+        "1ST CLASS PLATE",
+        "SHIELD之SUPPORT",
+        "HELM之EVIL",
+        "薬之HEALING",
+        "RING之SHIELDING",
+        "WERE SLAYER",
+        "MASHER之MAGES",
+        "MACE之SNAKES",
+        "ROD之SILENCE",
+        "BLADE CUSINART'",
+        "RING之RIGIDITY",
+        "ROD之FLAME",
+        "CHAIN之EVIL",
+        "NEUTRAL PLATE",
+        "SHIELD之EVIL",
+        "RING之SUFFOCATION",
+        "RING之MOVEMENT",
+        "巻之AFFLICTION",
+        "EPEE之DISASTER",
+        "DAGGER之SLICING",
+        "MORBID MACE",
+        "BENT STAFF",
+        "DAGGER之SPEED",
+        "ROBE之CURSES",
+        "LEATHER之LOSS",
+        "CHAIN之CURSES",
+        "B-PLATE之FIENDS",
+        "SHIELD之NOTHING",
+        "HELM之HANGOVERS",
+        "B-PLATE之BOONS",
+        "GLOVES之SILVER",
+        "SABER之EVIL",
+        "SOUL SLAYER",
+        "DAGGER之THIEVES",
+        "ARMOR之HEROES",
+        "ARMOR之LORDS",
+        "MURAMASA BLADE",
+        "SHURIKEN",
+        "ARMOR之FREON",
+        "ARMOR之EVIL",
+        "SHIELD之DEFENSE",
+        "RING之HEALING",
+        "RING之DISPELLING",
+        "RING之DEATH",
+        "ROD之RAISING",
+        "AMULET之COVER",
+        "DISPLACER ROBE",
+        "WINTER MITTENS",
+        "MAGIC CHARMS",
+        "STAFF之LIGHT",
+        "EXCALIBUR",
+        "SWORD之SWINGING",
+        "CLERIC PUNCHER",
+        "CLERIC's MACE",
+        "EPEE之SWINGING",
+        "RING PRO FIRE",
+        "CURSED PLATE",
+        "MITHRIL PLATE",
+        "STAFF之CURING",
+        "RING之REGEN",
+        "METAMORPH RING",
+        "STONE STONE",
+        "DREAMER's STONE",
+        "DAMIEN STONE",
+        "GREAT MAGE WAND [前]",
+        "COIN之POWER [前]",
+        "STONE之YOUTH",
+        "MIND STONE",
+        "STONE之PIETY",
+        "BLARNEY STONE",
+        "AMULET之SKILL [前]",
+        "AMULET之SKILL [後]",
+        "GREAT MAGE WAND [後]",
+        "COIN之POWER [後]",
+        "STAFF之GNILDA",
+        "HRATHNIR",
+        "KOD's HELMET",
+        "KOD's SHIELD",
+        "KOD's GAUNTLETS",
+        "KOD's ARMOR",
+        "CORRODED KEY",
+        "GORY BADGE",
+        "WEIRD EMBLEM",
+        "KEY之EBONY",
+        "KEY之CLOISTER",
+        "MITHRIL KEY",
+        "MASTER KEY",
+        "DEMON's STONE",
+    ];
+
+    TABLE[id]
 }

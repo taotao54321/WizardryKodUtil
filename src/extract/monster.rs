@@ -100,6 +100,9 @@ fn split_first_name_pair<'a>(bank: &'a [u8], buf: &'a [u8]) -> (GameString, Game
 }
 
 fn read_name_pair(buf: &[u8]) -> (GameString, GameString) {
+    // NOTE: モンスターの場合、名前データは必ず 0 終端まで読まれる。
+    // (その後 16 バイトまでで切り捨てたものがロードされるが、原作ではこの切り捨ては起こらない)
+
     let (singular, buf) = buf.split_once_(|&b| b == 0).unwrap();
     let singular = GameString::from_bytes(singular).unwrap();
 

@@ -1,10 +1,8 @@
 use flagset::{flags, FlagSet};
-use num_enum::TryFromPrimitive;
 
 flags! {
     /// 職業。
     #[repr(u8)]
-    #[derive(TryFromPrimitive)]
     pub enum Class: u8 {
         Fighter = 1 << 0,
         Mage = 1 << 1,
@@ -20,7 +18,17 @@ flags! {
 impl Class {
     /// 職業ID (`0..=7`) から職業を作る。
     pub fn from_id(id: u8) -> Option<Self> {
-        (id <= 7).then(|| Self::try_from(1 << id).unwrap())
+        match id {
+            0 => Some(Self::Fighter),
+            1 => Some(Self::Mage),
+            2 => Some(Self::Cleric),
+            3 => Some(Self::Thief),
+            4 => Some(Self::Wizard),
+            5 => Some(Self::Samurai),
+            6 => Some(Self::Lord),
+            7 => Some(Self::Ninja),
+            _ => None,
+        }
     }
 
     /// 職業ID (`0..=7`) を返す。
