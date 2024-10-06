@@ -48,6 +48,15 @@ impl Alignment {
         }
     }
 
+    /// 日本語での正式名称を返す。
+    pub fn name_ja(self) -> &'static str {
+        match self {
+            Self::Good => "善",
+            Self::Neutral => "中立",
+            Self::Evil => "悪",
+        }
+    }
+
     /// 全ての性格を昇順で返す。
     pub fn iter(
     ) -> impl DoubleEndedIterator<Item = Self> + ExactSizeIterator + std::iter::FusedIterator + Clone
