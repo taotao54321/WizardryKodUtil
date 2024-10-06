@@ -33,6 +33,7 @@ pub fn extract_monster(rom: &Rom, id: usize) -> Monster {
 
     let (name_known_singular, name_known_plural, buf) = split_first_name_pair(bank, buf);
     let (name_unknown_singular, name_unknown_plural, buf) = split_first_name_pair(bank, buf);
+
     let (kinds, buf) = buf.split_first_u16le().unwrap();
     let kinds = MonsterKinds::new(kinds).unwrap();
     let (spawn_dice_expr, buf) = split_first_dice_expr::<MonsterSpawnDiceExpr>(buf);
