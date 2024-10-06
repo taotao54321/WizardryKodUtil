@@ -147,15 +147,15 @@ pub type MonsterKinds = FlagSet<MonsterKind>;
 
 /// モンスター種別マスクをフォーマットし、正式名称のカンマ区切り文字列にする。
 #[derive(Debug)]
-pub struct MonsterKindDisplay(MonsterKinds);
+pub struct MonsterKindsDisplay(MonsterKinds);
 
-impl MonsterKindDisplay {
+impl MonsterKindsDisplay {
     pub fn new(kinds: MonsterKinds) -> Self {
         Self(kinds)
     }
 }
 
-impl std::fmt::Display for MonsterKindDisplay {
+impl std::fmt::Display for MonsterKindsDisplay {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut first = true;
         for kind in MonsterKind::iter() {
@@ -174,15 +174,15 @@ impl std::fmt::Display for MonsterKindDisplay {
 
 /// モンスター種別マスクをフォーマットし、略称を繋げた文字列にする。
 #[derive(Debug)]
-pub struct MonsterKindDisplayAbbrev(MonsterKinds);
+pub struct MonsterKindsDisplayAbbrev(MonsterKinds);
 
-impl MonsterKindDisplayAbbrev {
+impl MonsterKindsDisplayAbbrev {
     pub fn new(kinds: MonsterKinds) -> Self {
         Self(kinds)
     }
 }
 
-impl std::fmt::Display for MonsterKindDisplayAbbrev {
+impl std::fmt::Display for MonsterKindsDisplayAbbrev {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for kind in MonsterKind::iter() {
             if self.0.contains(kind) {

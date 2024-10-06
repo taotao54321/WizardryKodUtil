@@ -105,6 +105,7 @@ fn output_markdown_row(id: usize, item: Item) {
         notes.extend(note_melee_accuracy(melee_accuracy));
         notes.extend(note_extra_melee_count(extra_melee_count));
         notes.extend(note_critical(critical));
+        notes.extend(note_slay(slay_monster_kinds));
         // TODO
         row.notes(notes.into_iter().join("<br>"));
     }
@@ -130,6 +131,15 @@ fn note_extra_melee_count(extra_melee_count: u8) -> Option<String> {
 
 fn note_critical(critical: bool) -> Option<String> {
     critical.then(|| "クリティカル".to_owned())
+}
+
+fn note_slay(slay_monster_kinds: MonsterKinds) -> Option<String> {
+    (!slay_monster_kinds.is_empty()).then(|| {
+        format!(
+            "倍打: {}",
+            MonsterKindsDisplayAbbrev::new(slay_monster_kinds)
+        )
+    })
 }
 
 fn fmt_ac(ac: i8) -> String {
