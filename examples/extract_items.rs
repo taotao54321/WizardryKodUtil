@@ -108,6 +108,7 @@ fn output_markdown_row(id: usize, item: Item) {
         notes.extend(note_slay(slay_monster_kinds));
         notes.extend(note_repel(repel_monster_kinds));
         notes.extend(note_element_resistance(element_resistance));
+        notes.extend(note_healing(healing));
         // TODO
         row.notes(notes.into_iter().join("<br>"));
     }
@@ -155,6 +156,10 @@ fn note_repel(repel_monster_kinds: MonsterKinds) -> Option<String> {
 
 fn note_element_resistance(elements: Elements) -> Option<String> {
     (!elements.is_empty()).then(|| format!("抵抗: {}", ElementsDisplayAbbrev::new(elements, " ")))
+}
+
+fn note_healing(healing: i8) -> Option<String> {
+    (healing != 0).then(|| format!("ヒーリング: {healing:+}"))
 }
 
 fn fmt_ac(ac: i8) -> String {
