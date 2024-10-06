@@ -1,4 +1,4 @@
-//! NES 版 Wizardry KoD 関連ユーティリティ。
+//! NES 版 Wizardry #2 (Knight of Diamonds) 関連ユーティリティ。
 
 // NOTE: flagset クレートによって作られる enum の内部値に依存してはならない。
 // 内部値はビットマスクとして指定した値とは関係なく 0, 1, 2, ... の順に振られるため。
