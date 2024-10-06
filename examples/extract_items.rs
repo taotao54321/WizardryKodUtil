@@ -109,7 +109,8 @@ fn output_markdown_row(id: usize, item: Item) {
         notes.extend(note_repel(repel_monster_kinds));
         notes.extend(note_element_resistance(element_resistance));
         notes.extend(note_healing(healing));
-        // TODO: use, special_power
+        notes.extend(note_use(use_spell_id, usable_in_camp, usable_in_battle));
+        // TODO: special_power
         notes.extend(note_break(
             break_item_id,
             break_probability,
@@ -168,7 +169,15 @@ fn note_healing(healing: i8) -> Option<String> {
 }
 
 fn note_use(use_spell_id: u8, usable_in_camp: bool, usable_in_battle: bool) -> Option<String> {
-    todo!();
+    (usable_in_camp || usable_in_battle).then(|| {
+        let spell_name = extract::spell_name(usize::from(use_spell_id));
+        let camp = usable_in_camp.then_some("キャンプ");
+        let battle = usable_in_battle.then_some("戦闘");
+        format!(
+            "使用: {spell_name} ({})",
+            [camp, battle].into_iter().flatten().join("/")
+        )
+    })
 }
 
 fn note_special_power(special_power_id: u8) -> Option<String> {
