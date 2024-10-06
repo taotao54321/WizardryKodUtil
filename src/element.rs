@@ -73,23 +73,26 @@ impl Element {
 /// 攻撃属性マスク。
 pub type Elements = FlagSet<Element>;
 
-/// 攻撃属性マスクをフォーマットし、正式名称のカンマ区切り文字列にする。
+/// 攻撃属性マスクをフォーマットし、正式名称を join した文字列にする。
 #[derive(Debug)]
-pub struct ElementsDisplay(Elements);
+pub struct ElementsDisplay<'sep> {
+    elements: Elements,
+    sep: &'sep str,
+}
 
-impl ElementsDisplay {
-    pub fn new(elements: Elements) -> Self {
-        Self(elements)
+impl<'sep> ElementsDisplay<'sep> {
+    pub fn new(elements: Elements, sep: &'sep str) -> Self {
+        Self { elements, sep }
     }
 }
 
-impl std::fmt::Display for ElementsDisplay {
+impl std::fmt::Display for ElementsDisplay<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut first = true;
         for element in Element::iter() {
-            if self.0.contains(element) {
+            if self.elements.contains(element) {
                 if !first {
-                    f.write_str(",")?;
+                    f.write_str(self.sep)?;
                 }
                 f.write_str(element.name())?;
                 first = false;
@@ -100,21 +103,29 @@ impl std::fmt::Display for ElementsDisplay {
     }
 }
 
-/// 攻撃属性マスクをフォーマットし、略称を繋げた文字列にする。
+/// 攻撃属性マスクをフォーマットし、略称を join した文字列にする。
 #[derive(Debug)]
-pub struct ElementsDisplayAbbrev(Elements);
+pub struct ElementsDisplayAbbrev<'sep> {
+    elements: Elements,
+    sep: &'sep str,
+}
 
-impl ElementsDisplayAbbrev {
-    pub fn new(elements: Elements) -> Self {
-        Self(elements)
+impl<'sep> ElementsDisplayAbbrev<'sep> {
+    pub fn new(elements: Elements, sep: &'sep str) -> Self {
+        Self { elements, sep }
     }
 }
 
-impl std::fmt::Display for ElementsDisplayAbbrev {
+impl std::fmt::Display for ElementsDisplayAbbrev<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut first = true;
         for kind in Element::iter() {
-            if self.0.contains(kind) {
+            if self.elements.contains(kind) {
+                if !first {
+                    f.write_str(self.sep)?;
+                }
                 f.write_str(kind.name_abbrev())?;
+                first = false;
             }
         }
 

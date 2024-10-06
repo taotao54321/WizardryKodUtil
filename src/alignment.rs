@@ -68,23 +68,26 @@ impl Alignment {
 /// 性格マスク。
 pub type Alignments = FlagSet<Alignment>;
 
-/// 性格マスクをフォーマットし、正式名称のカンマ区切り文字列にする。
+/// 性格マスクをフォーマットし、正式名称を join した文字列にする。
 #[derive(Debug)]
-pub struct AlignementsDisplay(Alignments);
+pub struct AlignementsDisplay<'sep> {
+    alignments: Alignments,
+    sep: &'sep str,
+}
 
-impl AlignementsDisplay {
-    pub fn new(alignments: Alignments) -> Self {
-        Self(alignments)
+impl<'sep> AlignementsDisplay<'sep> {
+    pub fn new(alignments: Alignments, sep: &'sep str) -> Self {
+        Self { alignments, sep }
     }
 }
 
-impl std::fmt::Display for AlignementsDisplay {
+impl std::fmt::Display for AlignementsDisplay<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut first = true;
         for alignment in Alignment::iter() {
-            if self.0.contains(alignment) {
+            if self.alignments.contains(alignment) {
                 if !first {
-                    f.write_str(",")?;
+                    f.write_str(self.sep)?;
                 }
                 f.write_str(alignment.name())?;
                 first = false;
@@ -95,21 +98,29 @@ impl std::fmt::Display for AlignementsDisplay {
     }
 }
 
-/// 性格マスクをフォーマットし、頭文字を繋げた文字列にする。
+/// 性格マスクをフォーマットし、頭文字を join した文字列にする。
 #[derive(Debug)]
-pub struct AlignementsDisplayInitial(Alignments);
+pub struct AlignementsDisplayInitial<'sep> {
+    alignments: Alignments,
+    sep: &'sep str,
+}
 
-impl AlignementsDisplayInitial {
-    pub fn new(alignments: Alignments) -> Self {
-        Self(alignments)
+impl<'sep> AlignementsDisplayInitial<'sep> {
+    pub fn new(alignments: Alignments, sep: &'sep str) -> Self {
+        Self { alignments, sep }
     }
 }
 
-impl std::fmt::Display for AlignementsDisplayInitial {
+impl std::fmt::Display for AlignementsDisplayInitial<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut first = true;
         for alignment in Alignment::iter() {
-            if self.0.contains(alignment) {
+            if self.alignments.contains(alignment) {
+                if !first {
+                    f.write_str(self.sep)?;
+                }
                 f.write_str(alignment.name_initial())?;
+                first = false;
             }
         }
 

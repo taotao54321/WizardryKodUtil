@@ -92,7 +92,7 @@ fn output_markdown_row(id: usize, monster: Monster) {
     row.name_known(format!("{true_name}<br>{name_known_plural}"));
     row.name_unknown(format!("{name_unknown_singular}<br>{name_unknown_plural}"));
 
-    row.kinds(format!("{}", MonsterKindsDisplay::new(kinds)));
+    row.kinds(format!("{}", MonsterKindsDisplay::new(kinds, " ")));
     row.hp(format!("{hp_dice_expr}"));
     row.ac(format!("{ac}"));
     row.spell_resistance(format!("{spell_resistance}/256"));
@@ -134,7 +134,7 @@ fn note_spells(mage: u8, cleric: u8) -> Option<String> {
 }
 
 fn note_breath(elements: Elements) -> Option<String> {
-    (!elements.is_empty()).then(|| format!("息: {}", ElementsDisplayAbbrev::new(elements)))
+    (!elements.is_empty()).then(|| format!("息: {}", ElementsDisplayAbbrev::new(elements, " ")))
 }
 
 fn note_special(drain_xl: u8, healing: i8, abilitys: MonsterAbilitys) -> Option<String> {
@@ -172,7 +172,7 @@ fn note_special(drain_xl: u8, healing: i8, abilitys: MonsterAbilitys) -> Option<
 }
 
 fn note_element_resistance(elements: Elements) -> Option<String> {
-    (!elements.is_empty()).then(|| format!("抵抗: {}", ElementsDisplayAbbrev::new(elements)))
+    (!elements.is_empty()).then(|| format!("抵抗: {}", ElementsDisplayAbbrev::new(elements, " ")))
 }
 
 fn note_vulnerability(abilitys: MonsterAbilitys) -> Option<String> {

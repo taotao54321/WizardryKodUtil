@@ -145,23 +145,26 @@ impl MonsterKind {
 /// モンスター種別マスク。
 pub type MonsterKinds = FlagSet<MonsterKind>;
 
-/// モンスター種別マスクをフォーマットし、正式名称のカンマ区切り文字列にする。
+/// モンスター種別マスクをフォーマットし、正式名称を join した文字列にする。
 #[derive(Debug)]
-pub struct MonsterKindsDisplay(MonsterKinds);
+pub struct MonsterKindsDisplay<'sep> {
+    kinds: MonsterKinds,
+    sep: &'sep str,
+}
 
-impl MonsterKindsDisplay {
-    pub fn new(kinds: MonsterKinds) -> Self {
-        Self(kinds)
+impl<'sep> MonsterKindsDisplay<'sep> {
+    pub fn new(kinds: MonsterKinds, sep: &'sep str) -> Self {
+        Self { kinds, sep }
     }
 }
 
-impl std::fmt::Display for MonsterKindsDisplay {
+impl std::fmt::Display for MonsterKindsDisplay<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut first = true;
         for kind in MonsterKind::iter() {
-            if self.0.contains(kind) {
+            if self.kinds.contains(kind) {
                 if !first {
-                    f.write_str(",")?;
+                    f.write_str(self.sep)?;
                 }
                 f.write_str(kind.name())?;
                 first = false;
@@ -172,21 +175,29 @@ impl std::fmt::Display for MonsterKindsDisplay {
     }
 }
 
-/// モンスター種別マスクをフォーマットし、略称を繋げた文字列にする。
+/// モンスター種別マスクをフォーマットし、略称を join した文字列にする。
 #[derive(Debug)]
-pub struct MonsterKindsDisplayAbbrev(MonsterKinds);
+pub struct MonsterKindsDisplayAbbrev<'sep> {
+    kinds: MonsterKinds,
+    sep: &'sep str,
+}
 
-impl MonsterKindsDisplayAbbrev {
-    pub fn new(kinds: MonsterKinds) -> Self {
-        Self(kinds)
+impl<'sep> MonsterKindsDisplayAbbrev<'sep> {
+    pub fn new(kinds: MonsterKinds, sep: &'sep str) -> Self {
+        Self { kinds, sep }
     }
 }
 
-impl std::fmt::Display for MonsterKindsDisplayAbbrev {
+impl std::fmt::Display for MonsterKindsDisplayAbbrev<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut first = true;
         for kind in MonsterKind::iter() {
-            if self.0.contains(kind) {
+            if self.kinds.contains(kind) {
+                if !first {
+                    f.write_str(self.sep)?;
+                }
                 f.write_str(kind.name_abbrev())?;
+                first = false;
             }
         }
 
@@ -267,23 +278,26 @@ impl MonsterAbility {
 /// モンスター特殊能力マスク。
 pub type MonsterAbilitys = FlagSet<MonsterAbility>;
 
-/// モンスター特殊能力マスクをフォーマットし、正式名称のカンマ区切り文字列にする。
+/// モンスター特殊能力マスクをフォーマットし、正式名称を join した文字列にする。
 #[derive(Debug)]
-pub struct MonsterAbilitysDisplay(MonsterAbilitys);
+pub struct MonsterAbilitysDisplay<'sep> {
+    abilitys: MonsterAbilitys,
+    sep: &'sep str,
+}
 
-impl MonsterAbilitysDisplay {
-    pub fn new(abilitys: MonsterAbilitys) -> Self {
-        Self(abilitys)
+impl<'sep> MonsterAbilitysDisplay<'sep> {
+    pub fn new(abilitys: MonsterAbilitys, sep: &'sep str) -> Self {
+        Self { abilitys, sep }
     }
 }
 
-impl std::fmt::Display for MonsterAbilitysDisplay {
+impl std::fmt::Display for MonsterAbilitysDisplay<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut first = true;
         for ability in MonsterAbility::iter() {
-            if self.0.contains(ability) {
+            if self.abilitys.contains(ability) {
                 if !first {
-                    f.write_str(",")?;
+                    f.write_str(self.sep)?;
                 }
                 f.write_str(ability.name())?;
                 first = false;
@@ -294,21 +308,29 @@ impl std::fmt::Display for MonsterAbilitysDisplay {
     }
 }
 
-/// モンスター特殊能力マスクをフォーマットし、略称を繋げた文字列にする。
+/// モンスター特殊能力マスクをフォーマットし、略称を join した文字列にする。
 #[derive(Debug)]
-pub struct MonsterAbilitysDisplayAbbrev(MonsterAbilitys);
+pub struct MonsterAbilitysDisplayAbbrev<'sep> {
+    abilitys: MonsterAbilitys,
+    sep: &'sep str,
+}
 
-impl MonsterAbilitysDisplayAbbrev {
-    pub fn new(abilitys: MonsterAbilitys) -> Self {
-        Self(abilitys)
+impl<'sep> MonsterAbilitysDisplayAbbrev<'sep> {
+    pub fn new(abilitys: MonsterAbilitys, sep: &'sep str) -> Self {
+        Self { abilitys, sep }
     }
 }
 
-impl std::fmt::Display for MonsterAbilitysDisplayAbbrev {
+impl std::fmt::Display for MonsterAbilitysDisplayAbbrev<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut first = true;
         for ability in MonsterAbility::iter() {
-            if self.0.contains(ability) {
+            if self.abilitys.contains(ability) {
+                if !first {
+                    f.write_str(self.sep)?;
+                }
                 f.write_str(ability.name_abbrev())?;
+                first = false;
             }
         }
 

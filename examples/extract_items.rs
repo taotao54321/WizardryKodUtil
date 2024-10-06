@@ -139,7 +139,7 @@ fn note_slay(slay_monster_kinds: MonsterKinds) -> Option<String> {
     (!slay_monster_kinds.is_empty()).then(|| {
         format!(
             "倍打: {}",
-            MonsterKindsDisplayAbbrev::new(slay_monster_kinds)
+            MonsterKindsDisplayAbbrev::new(slay_monster_kinds, " ")
         )
     })
 }
@@ -148,13 +148,13 @@ fn note_repel(repel_monster_kinds: MonsterKinds) -> Option<String> {
     (!repel_monster_kinds.is_empty()).then(|| {
         format!(
             "撃退: {}",
-            MonsterKindsDisplayAbbrev::new(repel_monster_kinds)
+            MonsterKindsDisplayAbbrev::new(repel_monster_kinds, " ")
         )
     })
 }
 
 fn note_element_resistance(elements: Elements) -> Option<String> {
-    (!elements.is_empty()).then(|| format!("抵抗: {}", ElementsDisplayAbbrev::new(elements)))
+    (!elements.is_empty()).then(|| format!("抵抗: {}", ElementsDisplayAbbrev::new(elements, " ")))
 }
 
 fn fmt_ac(ac: i8) -> String {

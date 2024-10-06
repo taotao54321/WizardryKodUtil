@@ -96,23 +96,26 @@ impl Class {
 /// 職業マスク。
 pub type Classes = FlagSet<Class>;
 
-/// 職業マスクをフォーマットし、正式名称のカンマ区切り文字列にする。
+/// 職業マスクをフォーマットし、正式名称を join した文字列にする。
 #[derive(Debug)]
-pub struct ClassesDisplay(Classes);
+pub struct ClassesDisplay<'sep> {
+    classes: Classes,
+    sep: &'sep str,
+}
 
-impl ClassesDisplay {
-    pub fn new(classes: Classes) -> Self {
-        Self(classes)
+impl<'sep> ClassesDisplay<'sep> {
+    pub fn new(classes: Classes, sep: &'sep str) -> Self {
+        Self { classes, sep }
     }
 }
 
-impl std::fmt::Display for ClassesDisplay {
+impl std::fmt::Display for ClassesDisplay<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut first = true;
         for class in Class::iter() {
-            if self.0.contains(class) {
+            if self.classes.contains(class) {
                 if !first {
-                    f.write_str(",")?;
+                    f.write_str(self.sep)?;
                 }
                 f.write_str(class.name())?;
                 first = false;
