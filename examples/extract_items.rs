@@ -107,6 +107,7 @@ fn output_markdown_row(id: usize, item: Item) {
         notes.extend(note_critical(critical));
         notes.extend(note_slay(slay_monster_kinds));
         notes.extend(note_repel(repel_monster_kinds));
+        notes.extend(note_element_resistance(element_resistance));
         // TODO
         row.notes(notes.into_iter().join("<br>"));
     }
@@ -150,6 +151,10 @@ fn note_repel(repel_monster_kinds: MonsterKinds) -> Option<String> {
             MonsterKindsDisplayAbbrev::new(repel_monster_kinds)
         )
     })
+}
+
+fn note_element_resistance(elements: Elements) -> Option<String> {
+    (!elements.is_empty()).then(|| format!("抵抗: {}", ElementsDisplayAbbrev::new(elements)))
 }
 
 fn fmt_ac(ac: i8) -> String {
