@@ -106,6 +106,7 @@ fn output_markdown_row(id: usize, item: Item) {
         notes.extend(note_extra_melee_count(extra_melee_count));
         notes.extend(note_critical(critical));
         notes.extend(note_slay(slay_monster_kinds));
+        notes.extend(note_repel(repel_monster_kinds));
         // TODO
         row.notes(notes.into_iter().join("<br>"));
     }
@@ -138,6 +139,15 @@ fn note_slay(slay_monster_kinds: MonsterKinds) -> Option<String> {
         format!(
             "倍打: {}",
             MonsterKindsDisplayAbbrev::new(slay_monster_kinds)
+        )
+    })
+}
+
+fn note_repel(repel_monster_kinds: MonsterKinds) -> Option<String> {
+    (!repel_monster_kinds.is_empty()).then(|| {
+        format!(
+            "撃退: {}",
+            MonsterKindsDisplayAbbrev::new(repel_monster_kinds)
         )
     })
 }
