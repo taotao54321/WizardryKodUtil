@@ -172,7 +172,7 @@ impl GameChar {
         match self {
             Self::Space => ' ',
             Self::Exclamation => '!',
-            Self::Quotation => '!',
+            Self::Quotation => '"',
             Self::Hash => '#',
             Self::Dollar => '$',
             Self::Percent => '%',
